@@ -1,7 +1,13 @@
 package handlers
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/vaighir/go-diet/app/pkg/models"
+	"github.com/vaighir/go-diet/app/pkg/render"
+)
 
 func Home(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("<h1>Hello World!</h1>"))
+
+	render.RenderTemplate(w, "home.page.tmpl", &models.TemplateData{})
 }
