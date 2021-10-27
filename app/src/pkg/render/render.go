@@ -8,10 +8,21 @@ import (
 	"path/filepath"
 	"text/template"
 
+	"github.com/vaighir/go-diet/app/pkg/config"
 	"github.com/vaighir/go-diet/app/pkg/models"
 )
 
+const pathToTemplates = "./templates"
+const layoutPathEnd = "layout.tmpl"
+const pagePathEnd = "page.tmpl"
+
 var functions = template.FuncMap{}
+
+var app *config.AppConfig
+
+func NewTemplates(a *config.AppConfig) {
+	app = a
+}
 
 func AddDefaultData(td *models.TemplateData) *models.TemplateData {
 	return td
@@ -21,7 +32,12 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateData)
 
 	var templateCache map[string]*template.Template
 
-	templateCache, _ = CreateTemplateCache()
+	if app.UseCache {
+		// get the template cache from the app config
+		templateCache = app.TemplateCache
+	} else {
+		templateCache, _ = CreateTemplateCache()
+	}
 
 	t, ok := templateCache[tmpl]
 	if !ok {
@@ -44,7 +60,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateData)
 func CreateTemplateCache() (map[string]*template.Template, error) {
 	myCache := map[string]*template.Template{}
 
-	pages, err := filepath.Glob("./templates/*.page.tmpl")
+	pages, err := filepath.Glob(fmt.Sprintf("%s/*.%s", pathToTemplates, pagePathEnd))
 	if err != nil {
 		return myCache, err
 	}
@@ -57,13 +73,13 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 			return myCache, err
 		}
 
-		matches, err := filepath.Glob("./templates/*.layout.tmpl")
+		matches, err := filepath.Glob(fmt.Sprintf("%s/*.%s", pathToTemplates, layoutPathEnd))
 		if err != nil {
 			return myCache, err
 		}
 
 		if len(matches) > 0 {
-			ts, err = ts.ParseGlob("./templates/*.layout.tmpl")
+			ts, err = ts.ParseGlob(fmt.Sprintf("%s/*.%s", pathToTemplates, layoutPathEnd))
 			if err != nil {
 				return myCache, err
 			}
