@@ -3,7 +3,9 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 
+	"github.com/alexedwards/scs/v2"
 	"github.com/vaighir/go-diet/app/pkg/config"
 	"github.com/vaighir/go-diet/app/pkg/render"
 )
@@ -11,6 +13,7 @@ import (
 const portNumber = ":8080"
 
 var app config.AppConfig
+var session *scs.SessionManager
 
 func main() {
 
@@ -44,5 +47,12 @@ func setupConfig() {
 	app.TemplateCache = templateCache
 
 	render.NewTemplates(&app)
+
+	session = scs.New()
+	session.Lifetime = 24 * time.Hour
+	session.Cookie.Persist = true
+	session.Cookie.Secure = app.InProduction
+
+	app.Session = session
 
 }

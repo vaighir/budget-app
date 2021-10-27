@@ -18,4 +18,7 @@ require (
 	golang.org/x/text v0.3.6 // indirect
 )
 
-require github.com/jackc/pgtype v1.8.1 // indirect
+require (
+	github.com/alexedwards/scs/v2 v2.4.0
+	github.com/jackc/pgtype v1.8.1 // indirect
+)
