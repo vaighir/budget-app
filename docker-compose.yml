@@ -1,14 +1,9 @@
 version: "3.9"
 
 x-general: &general
-  MYSQL_USER: user
-  MYSQL_PASSWORD: password
-  MYSQL_HOSTNAME: mysql
-  MYSQL_PORT: "3306"
-  MYSQL_DATABASE: test_db
-
-x-mysql: &mysql
-  MYSQL_ROOT_PASSWORD: root
+  POSTGRES_PASSWORD: password
+  POSTGRES_USER: user
+  POSTGRES_DB: test_db
 
 services:
   app:
@@ -20,16 +15,15 @@ services:
       <<: *general
 
   db:
-    image: mysql:8.0.23
+    image: postgres:14.0
     restart: always
     environment:
       <<: *general
-      <<: *mysql
     ports:
-      - 3306:3306
+      - 5432:5432
     volumes:
       - ./db:/docker-entrypoint-initdb.d
-      - db:/var/lib/mysql
+      - db:/var/lib/postgresql/data
 
 
   adminer:
