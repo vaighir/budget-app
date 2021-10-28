@@ -22,21 +22,14 @@ func GetAllUsers() []models.User {
 		log.Fatal(err)
 	}
 
-	var id int
-	var username, password string
 	var user models.User
-
 	var users []models.User
 
 	for rows.Next() {
-		err := rows.Scan(&id, &username, &password)
+		err := rows.Scan(&user.Id, &user.Username, &user.Password)
 		if err != nil {
 			log.Println(err)
 		}
-
-		user.Id = id
-		user.Username = username
-		user.Password = password
 
 		users = append(users, user)
 
@@ -48,7 +41,6 @@ func GetAllUsers() []models.User {
 
 func GetUserById(id int) models.User {
 
-	var username, password string
 	var user models.User
 
 	db, err := drivers.ConnectSQL(dbDns)
@@ -57,14 +49,12 @@ func GetUserById(id int) models.User {
 	}
 	defer db.SQL.Close()
 
-	err = db.SQL.QueryRow("select username, password from users where id = $1", id).Scan(&username, &password)
+	err = db.SQL.QueryRow("select username, password from users where id = $1", id).Scan(&user.Username, &user.Password)
 	if err != nil {
 		log.Println(err)
 	}
 
 	user.Id = id
-	user.Username = username
-	user.Password = password
 
 	return user
 }
