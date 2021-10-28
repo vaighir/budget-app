@@ -7,6 +7,7 @@ import (
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/vaighir/go-diet/app/pkg/config"
+	"github.com/vaighir/go-diet/app/pkg/handlers"
 	"github.com/vaighir/go-diet/app/pkg/render"
 )
 
@@ -54,5 +55,7 @@ func setupConfig() {
 	session.Cookie.Secure = app.InProduction
 
 	app.Session = session
+
+	handlers.NewHandlers(&app)
 
 }

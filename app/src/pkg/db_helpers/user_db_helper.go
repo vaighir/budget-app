@@ -59,6 +59,26 @@ func GetUserById(id int) models.User {
 	return user
 }
 
+func GetUserByUsername(username string) models.User {
+
+	var user models.User
+
+	db, err := drivers.ConnectSQL(dbDns)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.SQL.Close()
+
+	err = db.SQL.QueryRow("select id, password from users where username = $1", username).Scan(&user.Id, &user.Password)
+	if err != nil {
+		log.Println(err)
+	}
+
+	user.Username = username
+
+	return user
+}
+
 func UpdateUser(models.User) {
 
 }
