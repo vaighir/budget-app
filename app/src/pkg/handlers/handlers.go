@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/vaighir/go-diet/app/pkg/config"
@@ -50,4 +51,19 @@ func ShowRegisterForm(w http.ResponseWriter, r *http.Request) {
 
 func Register(w http.ResponseWriter, r *http.Request) {
 
+	err := r.ParseForm()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	user := models.User{
+		Username: r.Form.Get("username"),
+		Password: r.Form.Get("password"),
+	}
+
+	db_helpers.CreateUser(user)
+
+	w.Write([]byte("<h1>User created</h1>"))
+	// TODO add redirection to login page
 }

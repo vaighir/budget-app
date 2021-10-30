@@ -83,7 +83,23 @@ func UpdateUser(models.User) {
 
 }
 
-func CreateUser(models.User) {
+func CreateUser(user models.User) {
+
+	db, err := drivers.ConnectSQL(dbDns)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.SQL.Close()
+
+	rows, err := db.SQL.Query("insert into users (username, password) values ($1, $2)", user.Username, user.Password)
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	for rows.Next() {
+
+	}
 
 }
 
