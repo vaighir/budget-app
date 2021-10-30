@@ -57,6 +57,11 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if r.Form.Get("password") != r.Form.Get("password-repeat") {
+		w.Write([]byte("<h1>Passwords don't match</h1>"))
+		return
+	}
+
 	user := models.User{
 		Username: r.Form.Get("username"),
 		Password: r.Form.Get("password"),
