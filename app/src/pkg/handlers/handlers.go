@@ -7,6 +7,7 @@ import (
 
 	"github.com/vaighir/go-diet/app/pkg/config"
 	"github.com/vaighir/go-diet/app/pkg/db_helpers"
+	"github.com/vaighir/go-diet/app/pkg/helpers"
 	"github.com/vaighir/go-diet/app/pkg/models"
 	"github.com/vaighir/go-diet/app/pkg/render"
 )
@@ -57,14 +58,27 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if r.Form.Get("password") != r.Form.Get("password-repeat") {
-		w.Write([]byte("<h1>Passwords don't match</h1>"))
+	username := r.Form.Get("username")
+	password := r.Form.Get("password")
+	passwordRepeat := r.Form.Get("password-repeat")
+
+	userCheck, userMsg := helpers.CheckUsername(username)
+
+	if !userCheck {
+		w.Write([]byte(userMsg))
+		return
+	}
+
+	pwdCheck, pwdMsg := helpers.CheckPassword(password, passwordRepeat)
+
+	if !pwdCheck {
+		w.Write([]byte(pwdMsg))
 		return
 	}
 
 	user := models.User{
-		Username: r.Form.Get("username"),
-		Password: r.Form.Get("password"),
+		Username: username,
+		Password: password,
 	}
 
 	db_helpers.CreateUser(user)
