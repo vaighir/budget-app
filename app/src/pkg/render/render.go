@@ -20,7 +20,7 @@ var functions = template.FuncMap{}
 
 var app *config.AppConfig
 
-func NewTemplates(a *config.AppConfig) {
+func InitializeTemplates(a *config.AppConfig) {
 	app = a
 }
 

@@ -8,10 +8,20 @@ import (
 	"github.com/alexedwards/scs/v2"
 	"github.com/vaighir/go-diet/app/pkg/config"
 	"github.com/vaighir/go-diet/app/pkg/handlers"
+	"github.com/vaighir/go-diet/app/pkg/helpers"
 	"github.com/vaighir/go-diet/app/pkg/render"
 )
 
-const portNumber = ":8080"
+const (
+	portNumber        = ":8080"
+	sessionLifetime   = 24 * time.Hour
+	cookie_persist    = true
+	minUsernameLength = 5
+	maxUsernameLength = 50
+	minPasswordLength = 10
+)
+
+var inProd = false
 
 var app config.AppConfig
 var session *scs.SessionManager
@@ -19,6 +29,8 @@ var session *scs.SessionManager
 func main() {
 
 	setupConfig()
+
+	initialize()
 
 	startServer()
 }
@@ -38,7 +50,18 @@ func startServer() {
 }
 
 func setupConfig() {
-	app.InProduction = false
+	app.InProduction = inProd
+
+	app.MinPasswordLength = minPasswordLength
+	app.MinUsernameLength = minUsernameLength
+	app.MaxUsernameLength = maxUsernameLength
+
+	session = scs.New()
+	session.Lifetime = sessionLifetime
+	session.Cookie.Persist = cookie_persist
+	session.Cookie.Secure = app.InProduction
+
+	app.Session = session
 
 	templateCache, err := render.CreateTemplateCache()
 	if err != nil {
@@ -46,16 +69,11 @@ func setupConfig() {
 	}
 
 	app.TemplateCache = templateCache
+}
 
-	render.NewTemplates(&app)
+func initialize() {
 
-	session = scs.New()
-	session.Lifetime = 24 * time.Hour
-	session.Cookie.Persist = true
-	session.Cookie.Secure = app.InProduction
-
-	app.Session = session
-
-	handlers.NewHandlers(&app)
-
+	render.InitializeTemplates(&app)
+	handlers.InitializeHandlers(&app)
+	helpers.InitializeHelpers(&app)
 }

@@ -14,7 +14,7 @@ import (
 
 var app *config.AppConfig
 
-func NewHandlers(a *config.AppConfig) {
+func InitializeHandlers(a *config.AppConfig) {
 	app = a
 }
 
