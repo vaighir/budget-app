@@ -5,6 +5,7 @@ import (
 
 	"github.com/vaighir/go-diet/app/pkg/drivers"
 	"github.com/vaighir/go-diet/app/pkg/models"
+	"golang.org/x/crypto/bcrypt"
 )
 
 const dbDns = "host=localhost port=5432 dbname=test_db user=user password=password"
@@ -91,7 +92,14 @@ func CreateUser(user models.User) {
 	}
 	defer db.SQL.Close()
 
-	rows, err := db.SQL.Query("insert into users (username, password) values ($1, $2)", user.Username, user.Password)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	rows, err := db.SQL.Query("insert into users (username, password) values ($1, $2)", user.Username, hashedPassword)
 
 	if err != nil {
 		log.Println(err)
