@@ -43,3 +43,11 @@ func ShowUser(w http.ResponseWriter, r *http.Request) {
 		StringMap: stringMap,
 	})
 }
+
+func ShowRegisterForm(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, "register.page.tmpl", &models.TemplateData{})
+}
+
+func Register(w http.ResponseWriter, r *http.Request) {
+
+}
