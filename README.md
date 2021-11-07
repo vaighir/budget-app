@@ -1,1 +1,1 @@
-# go-diet
+# Budget app
