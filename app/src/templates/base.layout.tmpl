@@ -24,7 +24,11 @@
 
 <ul class="navbar-nav">
 {{if index .BoolMap "logged_in"}}
-    <li class="nav-item nav-link"><a class="nav-link" href="/households">Households</li>
+    {{if index .IntMap "household_id"}}
+        <li class="nav-item nav-link"><a class="nav-link" href="/household">Your household</li>
+    {{else}}
+        <li class="nav-item nav-link"><a class="nav-link" href="/create-a-household">Create a household</li>
+    {{end}}
 {{end}}
 </ul>
 

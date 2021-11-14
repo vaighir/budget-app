@@ -31,7 +31,10 @@ func routes(app *config.AppConfig) http.Handler {
 
 	// Household routes
 
-	mux.Get("/households", handlers.Households)
+	mux.Get("/household", handlers.Household)
+
+	mux.Get("/create-a-household", handlers.ShowNewHouseholdForm)
+	mux.Post("/create-a-household", handlers.AddHousehold)
 
 	// Load static files
 

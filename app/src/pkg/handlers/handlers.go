@@ -19,6 +19,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 
 	boolMap := make(map[string]bool)
 	stringMap := make(map[string]string)
+	intMap := make(map[string]int)
 
 	getSessionMsg(r, stringMap)
 
@@ -27,6 +28,12 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	if loggedIn {
 		uid := app.Session.Get(r.Context(), "user_id")
 		user := db_helpers.GetUserById(uid.(int))
+
+		householdId := user.HouseholdId
+
+		if householdId > 0 {
+			intMap["household_id"] = householdId
+		}
 
 		stringMap["username"] = user.Username
 		boolMap["logged_in"] = true
@@ -37,6 +44,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 
 	render.RenderTemplate(w, "home.page.tmpl", &models.TemplateData{
 		StringMap: stringMap,
+		IntMap:    intMap,
 		BoolMap:   boolMap,
 	})
 
@@ -46,3 +54,16 @@ func getSessionMsg(r *http.Request, stringMap map[string]string) {
 	stringMap["warning"] = app.Session.PopString(r.Context(), "warning")
 	stringMap["info"] = app.Session.PopString(r.Context(), "info")
 }
+
+// TODO needs fixing
+/*func redirectIfNotLoggedIn(w http.ResponseWriter, r *http.Request, resource string) {
+	loggedIn := app.Session.Exists(r.Context(), "user_id")
+
+	if !loggedIn {
+
+		msg := fmt.Sprintf("You have to be logged in to view %s", resource)
+
+		app.Session.Put(r.Context(), "warning", msg)
+		http.Redirect(w, r, "https://www.google.com", http.StatusSeeOther)
+	}
+}*/
