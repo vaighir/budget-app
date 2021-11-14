@@ -1,0 +1,25 @@
+{{template "base" .}}
+
+{{define "content"}}
+  <div class="container">
+    <h1>Log in</h1>
+    <form action="login" method="post">
+    <hr>
+
+    <label for="username"><b>username</b></label>
+    <input type="text" placeholder="Enter username" name="username" id="username" required>
+
+    <label for="password"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="password" id="password" required>
+
+    <hr>
+
+    <button type="submit" class="btn btn-primary btn-lg">Login</button>
+
+    <p class="small fw-bold mt-2 pt-1 mb-0">
+      Don't have an account?
+      <a href="/register" class="link-danger">Register</a>
+    </p>
+  </div>
+</form>
+{{end}}

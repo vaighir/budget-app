@@ -99,7 +99,8 @@ func CreateUser(user models.User) {
 		return
 	}
 
-	rows, err := db.SQL.Query("insert into users (username, password) values ($1, $2)", user.Username, hashedPassword)
+	//TODO create logic to handle households correctly
+	rows, err := db.SQL.Query("insert into users (username, password, household_id) values ($1, $2, $3)", user.Username, hashedPassword, 1)
 
 	if err != nil {
 		log.Println(err)
