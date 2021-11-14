@@ -80,3 +80,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+func Logout(w http.ResponseWriter, r *http.Request) {
+
+	app.Session.Remove(r.Context(), "user_id")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+
+}
