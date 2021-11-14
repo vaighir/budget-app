@@ -40,6 +40,16 @@ Here comes content
 </ul>
 </div>
 </nav>
+
+<div>
+    <p class="text-danger">
+        {{index .StringMap "warning"}}
+    </p>
+
+    <p>
+        {{index .StringMap "info"}}
+    </p>
+</div>
     {{block "content" .}}
 
     {{end}}

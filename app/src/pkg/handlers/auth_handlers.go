@@ -12,7 +12,13 @@ import (
 )
 
 func ShowRegisterForm(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "register.page.tmpl", &models.TemplateData{})
+	stringMap := make(map[string]string)
+
+	getSessionMsg(r, stringMap)
+
+	render.RenderTemplate(w, "register.page.tmpl", &models.TemplateData{
+		StringMap: stringMap,
+	})
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -27,17 +33,23 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	password := r.Form.Get("password")
 	passwordRepeat := r.Form.Get("password-repeat")
 
+	//	TODO prohibit creating a user if username already exists
+
 	userCheck, userMsg := helpers.CheckUsername(username)
 
 	if !userCheck {
-		w.Write([]byte(userMsg))
+		log.Println("Bad username")
+
+		app.Session.Put(r.Context(), "warning", userMsg)
+		http.Redirect(w, r, "/register", http.StatusSeeOther)
 		return
 	}
 
 	pwdCheck, pwdMsg := helpers.CheckPassword(password, passwordRepeat)
 
 	if !pwdCheck {
-		w.Write([]byte(pwdMsg))
+		app.Session.Put(r.Context(), "warning", pwdMsg)
+		http.Redirect(w, r, "/register", http.StatusSeeOther)
 		return
 	}
 
@@ -54,7 +66,12 @@ func Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func ShowLoginForm(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "login.page.tmpl", &models.TemplateData{})
+	stringMap := make(map[string]string)
+
+	getSessionMsg(r, stringMap)
+	render.RenderTemplate(w, "login.page.tmpl", &models.TemplateData{
+		StringMap: stringMap,
+	})
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -73,7 +90,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
 		log.Println(err)
+		app.Session.Put(r.Context(), "warning", "Wrong username or password")
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
 	} else {
 		app.Session.Put(r.Context(), "user_id", user.Id)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -82,8 +101,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
+	app.Session.Clear(r.Context())
+	app.Session.Put(r.Context(), "info", "You have been logged out")
 
-	app.Session.Remove(r.Context(), "user_id")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 
 }

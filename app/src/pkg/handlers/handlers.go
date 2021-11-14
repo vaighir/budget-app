@@ -20,6 +20,8 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	boolMap := make(map[string]bool)
 	stringMap := make(map[string]string)
 
+	getSessionMsg(r, stringMap)
+
 	loggedIn := app.Session.Exists(r.Context(), "user_id")
 
 	if loggedIn {
@@ -37,4 +39,10 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		StringMap: stringMap,
 		BoolMap:   boolMap,
 	})
+
+}
+
+func getSessionMsg(r *http.Request, stringMap map[string]string) {
+	stringMap["warning"] = app.Session.PopString(r.Context(), "warning")
+	stringMap["info"] = app.Session.PopString(r.Context(), "info")
 }
