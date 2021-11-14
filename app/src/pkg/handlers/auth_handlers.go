@@ -34,6 +34,11 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	passwordRepeat := r.Form.Get("password-repeat")
 
 	//	TODO prohibit creating a user if username already exists
+	if helpers.CheckIfUserExists(username) {
+		app.Session.Put(r.Context(), "warning", "User with this username already exists")
+		http.Redirect(w, r, "/register", http.StatusSeeOther)
+		return
+	}
 
 	userCheck, userMsg := helpers.CheckUsername(username)
 

@@ -3,6 +3,8 @@ package helpers
 import (
 	"fmt"
 	"regexp"
+
+	"github.com/vaighir/go-diet/app/pkg/db_helpers"
 )
 
 func CheckUsername(username string) (bool, string) {
@@ -47,4 +49,15 @@ func CheckPassword(password string, repeatPassword string) (bool, string) {
 	}
 
 	return check, msg
+}
+
+func CheckIfUserExists(username string) bool {
+	user := db_helpers.GetUserByUsername(username)
+	userExists := false
+
+	if user.Id > 0 {
+		userExists = true
+	}
+
+	return userExists
 }
