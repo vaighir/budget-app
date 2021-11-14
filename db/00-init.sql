@@ -12,7 +12,7 @@ CREATE TABLE household (
 CREATE TABLE users (
   id serial PRIMARY KEY,
   role_id INT NOT NULL DEFAULT 1,
-  household_id INT NOT NULL,
+  household_id INT,
   username VARCHAR(50) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
   CONSTRAINT role_id
