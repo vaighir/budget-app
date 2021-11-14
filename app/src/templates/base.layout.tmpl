@@ -23,7 +23,9 @@
 </ul>
 
 <ul class="navbar-nav">
-Here comes content
+{{if index .BoolMap "logged_in"}}
+    <li class="nav-item nav-link"><a class="nav-link" href="/households">Households</li>
+{{end}}
 </ul>
 
 </div>

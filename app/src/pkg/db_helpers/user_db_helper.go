@@ -18,7 +18,7 @@ func GetAllUsers() []models.User {
 	}
 	defer db.SQL.Close()
 
-	rows, err := db.SQL.Query("select id, username, password from users")
+	rows, err := db.SQL.Query("select id, username, password, household_id from users")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -27,7 +27,7 @@ func GetAllUsers() []models.User {
 	var users []models.User
 
 	for rows.Next() {
-		err := rows.Scan(&user.Id, &user.Username, &user.Password)
+		err := rows.Scan(&user.Id, &user.Username, &user.Password, &user.HouseholdId)
 		if err != nil {
 			log.Println(err)
 		}
@@ -50,7 +50,7 @@ func GetUserById(id int) models.User {
 	}
 	defer db.SQL.Close()
 
-	err = db.SQL.QueryRow("select username, password from users where id = $1", id).Scan(&user.Username, &user.Password)
+	err = db.SQL.QueryRow("select username, password, household_id from users where id = $1", id).Scan(&user.Username, &user.Password, &user.HouseholdId)
 	if err != nil {
 		log.Println(err)
 	}
@@ -70,7 +70,7 @@ func GetUserByUsername(username string) models.User {
 	}
 	defer db.SQL.Close()
 
-	err = db.SQL.QueryRow("select id, password from users where username = $1", username).Scan(&user.Id, &user.Password)
+	err = db.SQL.QueryRow("select id, password, household_id from users where username = $1", username).Scan(&user.Id, &user.Password, &user.HouseholdId)
 	if err != nil {
 		log.Println(err)
 	}
@@ -81,6 +81,14 @@ func GetUserByUsername(username string) models.User {
 }
 
 func UpdateUser(models.User) {
+
+}
+
+func AddUserToHousehold(u models.User, householdId int) {
+
+}
+
+func RemoveUserFromHousehold(u models.User, householdId int) {
 
 }
 

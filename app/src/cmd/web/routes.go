@@ -29,6 +29,10 @@ func routes(app *config.AppConfig) http.Handler {
 
 	mux.Get("/logout", handlers.Logout)
 
+	// Household routes
+
+	mux.Get("/households", handlers.Households)
+
 	// Load static files
 
 	fileServer := http.FileServer(http.Dir("./static/"))
