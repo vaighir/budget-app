@@ -48,8 +48,9 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	db_helpers.CreateUser(user)
 
-	w.Write([]byte("<h1>User created</h1>"))
-	// TODO add redirection to login page
+	log.Printf("Created user: %s", username)
+
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
 
 func ShowLoginForm(w http.ResponseWriter, r *http.Request) {
@@ -72,12 +73,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
 		log.Println(err)
-		w.Write([]byte("<h1>Wrong username or password</hq>"))
-		// TODO redirect to login page
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 	} else {
-		w.Write([]byte("<h1>You're logged in</hq>"))
-		// TODO save user to session
-		// TODO redirect to home page
+		app.Session.Put(r.Context(), "user_id", user.Id)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 
 }

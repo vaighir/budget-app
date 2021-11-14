@@ -18,16 +18,25 @@ func InitializeHandlers(a *config.AppConfig) {
 
 func Home(w http.ResponseWriter, r *http.Request) {
 
-	app.Session.Put(r.Context(), "username", "admin")
+	loggedIn := app.Session.Exists(r.Context(), "user_id")
 
-	var user = db_helpers.GetUserById(1)
+	if loggedIn {
+		uid := app.Session.Get(r.Context(), "user_id")
+		user := db_helpers.GetUserById(uid.(int))
 
-	stringMap := make(map[string]string)
-	stringMap["username"] = user.Username
+		stringMap := make(map[string]string)
+		stringMap["username"] = user.Username
 
-	render.RenderTemplate(w, "home.page.tmpl", &models.TemplateData{
-		StringMap: stringMap,
-	})
+		boolMap := make(map[string]bool)
+		boolMap["logged_in"] = true
+
+		render.RenderTemplate(w, "home.page.tmpl", &models.TemplateData{
+			StringMap: stringMap,
+			BoolMap:   boolMap,
+		})
+	} else {
+		w.Write([]byte("You're not logged in"))
+	}
 }
 
 func ShowUser(w http.ResponseWriter, r *http.Request) {
