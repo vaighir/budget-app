@@ -19,6 +19,7 @@ func InitializeHandlers(a *config.AppConfig) {
 func Home(w http.ResponseWriter, r *http.Request) {
 
 	loggedIn := app.Session.Exists(r.Context(), "user_id")
+	boolMap := make(map[string]bool)
 
 	if loggedIn {
 		uid := app.Session.Get(r.Context(), "user_id")
@@ -27,7 +28,6 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		stringMap := make(map[string]string)
 		stringMap["username"] = user.Username
 
-		boolMap := make(map[string]bool)
 		boolMap["logged_in"] = true
 
 		render.RenderTemplate(w, "home.page.tmpl", &models.TemplateData{
@@ -35,7 +35,11 @@ func Home(w http.ResponseWriter, r *http.Request) {
 			BoolMap:   boolMap,
 		})
 	} else {
-		w.Write([]byte("You're not logged in"))
+		boolMap["logged_in"] = false
+
+		render.RenderTemplate(w, "home.page.tmpl", &models.TemplateData{
+			BoolMap: boolMap,
+		})
 	}
 }
 
