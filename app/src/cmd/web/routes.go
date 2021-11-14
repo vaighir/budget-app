@@ -15,8 +15,11 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Use(middleware.Recoverer)
 	mux.Use(SessionLoad)
 
+	// Base routes
+
 	mux.Get("/", handlers.Home)
-	mux.Get("/user", handlers.ShowUser)
+
+	// Auth routes
 
 	mux.Get("/register", handlers.ShowRegisterForm)
 	mux.Post("/register", handlers.Register)
@@ -25,6 +28,8 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Post("/login", handlers.Login)
 
 	mux.Get("/logout", handlers.Logout)
+
+	// Load static files
 
 	fileServer := http.FileServer(http.Dir("./static/"))
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))

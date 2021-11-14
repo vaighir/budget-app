@@ -21,14 +21,16 @@
         <a class="nav-link" href="/">Home</a>
       </li>
 </ul>
+
 <ul class="navbar-nav">
 Here comes content
 </ul>
+
 </div>
 <div>
 <ul class="navbar-nav ml-auto">
     {{if index .BoolMap "logged_in"}}
-    <li class="nav-item">You're logged in as {{index .StringMap "username"}}</li>
+    <li class="nav-item nav-link">You're logged in as {{index .StringMap "username"}}</li>
     <li class="nav-item"><a class="nav-link" href="/logout">Log out</a></li>
     {{else}}
     <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>

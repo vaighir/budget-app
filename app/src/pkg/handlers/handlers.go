@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/vaighir/go-diet/app/pkg/config"
@@ -18,41 +17,24 @@ func InitializeHandlers(a *config.AppConfig) {
 
 func Home(w http.ResponseWriter, r *http.Request) {
 
-	loggedIn := app.Session.Exists(r.Context(), "user_id")
 	boolMap := make(map[string]bool)
+	stringMap := make(map[string]string)
+
+	loggedIn := app.Session.Exists(r.Context(), "user_id")
 
 	if loggedIn {
 		uid := app.Session.Get(r.Context(), "user_id")
 		user := db_helpers.GetUserById(uid.(int))
 
-		stringMap := make(map[string]string)
 		stringMap["username"] = user.Username
-
 		boolMap["logged_in"] = true
 
-		render.RenderTemplate(w, "home.page.tmpl", &models.TemplateData{
-			StringMap: stringMap,
-			BoolMap:   boolMap,
-		})
 	} else {
 		boolMap["logged_in"] = false
-
-		render.RenderTemplate(w, "home.page.tmpl", &models.TemplateData{
-			BoolMap: boolMap,
-		})
 	}
-}
 
-func ShowUser(w http.ResponseWriter, r *http.Request) {
-
-	var username = app.Session.Get(r.Context(), "username")
-
-	var user = db_helpers.GetUserByUsername(fmt.Sprint(username))
-
-	stringMap := make(map[string]string)
-	stringMap["username"] = user.Username
-
-	render.RenderTemplate(w, "show_user.page.tmpl", &models.TemplateData{
+	render.RenderTemplate(w, "home.page.tmpl", &models.TemplateData{
 		StringMap: stringMap,
+		BoolMap:   boolMap,
 	})
 }
