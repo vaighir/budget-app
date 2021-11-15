@@ -2,56 +2,75 @@
 
 {{define "content"}}
 <div class="container">
-<h1>{{index .StringMap "household_name"}}</h1>
+  <h1>{{index .StringMap "household_name"}}</h1>
 
-
-<div>
-  <p>Invite a new household member (Feature coming soon)</p>
-</div>
-
-<div>
-  <h2>Incomes</h2>
-
-  {{range index .InterfaceMap "incomes"}}
-  Income name: {{.Name}}
-  Income amount: {{.Amount}}
-  <p>Edit income</p>
-  <p>Delete income</p>
-  {{end}}
-  
 
   <div>
-    <h4>Add income</h4>
-
-    <form action="add-income" method="post">
-    <hr>
-
-      <label for="name"><b>Name</b></label>
-      <input type="text" placeholder="Enter name" name="name" id="name" required>
-
-      <label for="amount"><b>Amount</b></label>
-      <input type="number" step="0.01" placeholder="Enter amount" name="amount" id="amount" required>
-
-    <hr>
-
-      <button type="submit" class="registerbtn">Add income</button>
-    </form>
+    <p>Invite a new household member (Feature coming soon)</p>
   </div>
-</div>
 
-<div>
-  <h2>Savings</h2>
-</div> 
+  <div>
 
-<div>
-  <h2>Funds</h2>
-</div>
+    <h2>Incomes</h2>
 
-<div>
-  <h2>Emergency fund</h2>
-  <p>In here you can decide how many months of your normal expenses you want to save for your emergency fund</p>
-  {{index .IntMap "emergency_fund"}}
-</div>
+    <table class="table">
+      <thead>
+        <tr>
+          <td>Income name</td>
+          <td>Income amount</td>
+          <td>Edit income</td>
+          <td>Delete income</td>
+        </tr>
+      </thead>
+      <tbody>
+      {{range index .InterfaceMap "incomes"}}
+        <tr>
+          <td>{{.Name}}</td>
+          <td>{{.Amount}}</td>
+          <td>Edit</td>
+          <td>Delete</td>
+        </tr>
+      {{end}}
+      </tbody>
+    </table>
+
+    <div>
+      <h4>Add income</h4>
+
+      <form action="add-income" method="post">
+      <hr>
+
+        <label for="name"><b>Name</b></label>
+        <input type="text" placeholder="Enter name" name="name" id="name" required>
+
+        <label for="amount"><b>Amount</b></label>
+        <input type="number" step="0.01" placeholder="Enter amount" name="amount" id="amount" required>
+
+      <hr>
+        <button type="submit" class="registerbtn">Add income</button>
+      </form>
+    </div>
+  </div>
+
+  <hr>
+
+  <div>
+    <h2>Savings</h2>
+  </div> 
+
+  <hr>
+
+  <div>
+    <h2>Funds</h2>
+  </div>
+
+  <hr>
+
+  <div>
+    <h2>Emergency fund</h2>
+    <p>In here you can decide how many months of your normal expenses you want to save for your emergency fund</p>
+    {{index .IntMap "emergency_fund"}}
+  </div>
 
 </div>
 
