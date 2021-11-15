@@ -6,7 +6,7 @@ CREATE TABLE role (
 CREATE TABLE household (
   id serial PRIMARY KEY,
   name VARCHAR(255) UNIQUE NOT NULL,
-  months_for_emergency_fund INT
+  months_for_emergency_fund INT DEFAULT 0
 );
 
 CREATE TABLE users (
