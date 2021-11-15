@@ -13,6 +13,7 @@ func Household(w http.ResponseWriter, r *http.Request) {
 	boolMap := make(map[string]bool)
 	stringMap := make(map[string]string)
 	intMap := make(map[string]int)
+	floatMap := make(map[string]float64)
 	interfaceMap := make(map[string]interface{})
 
 	getSessionMsg(r, stringMap)
@@ -31,6 +32,12 @@ func Household(w http.ResponseWriter, r *http.Request) {
 
 			householdIncomes := db_helpers.GetAllIncomesByHouseholdId(householdId)
 
+			var totalHouseholdIncome float64
+
+			for _, income := range householdIncomes {
+				totalHouseholdIncome += income.Amount
+			}
+
 			stringMap["username"] = user.Username
 			stringMap["household_name"] = household.Name
 
@@ -38,11 +45,14 @@ func Household(w http.ResponseWriter, r *http.Request) {
 
 			intMap["emergency_fund"] = household.MonthsOfEmergencyFund
 
+			floatMap["total_income"] = totalHouseholdIncome
+
 			interfaceMap["incomes"] = householdIncomes
 
 			render.RenderTemplate(w, "household.page.tmpl", &models.TemplateData{
 				StringMap:    stringMap,
 				IntMap:       intMap,
+				FloatMap:     floatMap,
 				BoolMap:      boolMap,
 				InterfaceMap: interfaceMap,
 			})
