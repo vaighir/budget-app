@@ -26,4 +26,30 @@ func CreateIncome(householdId int, income models.Income) {
 	}
 }
 
-//func GetAllIncomesByHouseholdId(householdId int) []models.Income {}
+func GetAllIncomesByHouseholdId(householdId int) []models.Income {
+	db, err := drivers.ConnectSQL(dbDns)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.SQL.Close()
+
+	rows, err := db.SQL.Query("select id, name, amount from income where household_id = $1", householdId)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var income models.Income
+	var incomes []models.Income
+
+	for rows.Next() {
+		err := rows.Scan(&income.Id, &income.Name, &income.Amount)
+		if err != nil {
+			log.Println(err)
+		}
+
+		incomes = append(incomes, income)
+
+	}
+
+	return incomes
+}

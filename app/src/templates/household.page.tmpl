@@ -11,8 +11,14 @@
 
 <div>
   <h2>Incomes</h2>
+
+  {{range index .InterfaceMap "incomes"}}
+  Income name: {{.Name}}
+  Income amount: {{.Amount}}
   <p>Edit income</p>
   <p>Delete income</p>
+  {{end}}
+  
 
   <div>
     <h4>Add income</h4>

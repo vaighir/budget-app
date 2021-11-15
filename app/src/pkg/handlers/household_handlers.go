@@ -13,6 +13,7 @@ func Household(w http.ResponseWriter, r *http.Request) {
 	boolMap := make(map[string]bool)
 	stringMap := make(map[string]string)
 	intMap := make(map[string]int)
+	interfaceMap := make(map[string]interface{})
 
 	getSessionMsg(r, stringMap)
 
@@ -28,15 +29,26 @@ func Household(w http.ResponseWriter, r *http.Request) {
 
 			household := db_helpers.GetHouseholdById(householdId)
 
+			householdIncomes := db_helpers.GetAllIncomesByHouseholdId(householdId)
+
+			for _, income := range householdIncomes {
+				log.Printf("name %s, amount %f", income.Name, income.Amount)
+			}
+
 			stringMap["username"] = user.Username
 			stringMap["household_name"] = household.Name
+
 			boolMap["logged_in"] = true
+
 			intMap["emergency_fund"] = household.MonthsOfEmergencyFund
 
+			interfaceMap["incomes"] = householdIncomes
+
 			render.RenderTemplate(w, "household.page.tmpl", &models.TemplateData{
-				StringMap: stringMap,
-				IntMap:    intMap,
-				BoolMap:   boolMap,
+				StringMap:    stringMap,
+				IntMap:       intMap,
+				BoolMap:      boolMap,
+				InterfaceMap: interfaceMap,
 			})
 
 			return
