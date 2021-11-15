@@ -31,6 +31,7 @@ func Household(w http.ResponseWriter, r *http.Request) {
 			stringMap["username"] = user.Username
 			stringMap["household_name"] = household.Name
 			boolMap["logged_in"] = true
+			intMap["emergency_fund"] = household.MonthsOfEmergencyFund
 
 			render.RenderTemplate(w, "household.page.tmpl", &models.TemplateData{
 				StringMap: stringMap,

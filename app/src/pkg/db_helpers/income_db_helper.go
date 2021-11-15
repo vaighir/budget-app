@@ -25,3 +25,5 @@ func CreateIncome(householdId int, income models.Income) {
 
 	}
 }
+
+//func GetAllIncomesByHouseholdId(householdId int) []models.Income {}
