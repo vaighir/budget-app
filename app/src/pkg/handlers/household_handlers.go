@@ -25,20 +25,26 @@ func Household(w http.ResponseWriter, r *http.Request) {
 
 		if householdId > 0 {
 			intMap["household_id"] = householdId
+
+			household := db_helpers.GetHouseholdById(householdId)
+
+			stringMap["username"] = user.Username
+			stringMap["household_name"] = household.Name
+			boolMap["logged_in"] = true
+
+			render.RenderTemplate(w, "household.page.tmpl", &models.TemplateData{
+				StringMap: stringMap,
+				IntMap:    intMap,
+				BoolMap:   boolMap,
+			})
+
+			return
+
 		} else {
 			app.Session.Put(r.Context(), "warning", "You don't have a household.")
 			http.Redirect(w, r, "/create-a-household", http.StatusSeeOther)
 			return
 		}
-
-		stringMap["username"] = user.Username
-		boolMap["logged_in"] = true
-
-		render.RenderTemplate(w, "household.page.tmpl", &models.TemplateData{
-			StringMap: stringMap,
-			IntMap:    intMap,
-			BoolMap:   boolMap,
-		})
 
 	} else {
 		app.Session.Put(r.Context(), "warning", "You have to be logged in to view households")

@@ -35,3 +35,23 @@ func CreateHousehold(household models.Household) int {
 	return id
 
 }
+
+func GetHouseholdById(id int) models.Household {
+
+	var household models.Household
+
+	db, err := drivers.ConnectSQL(dbDns)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.SQL.Close()
+
+	err = db.SQL.QueryRow("select name, months_for_emergency_fund from household where id = $1", id).Scan(&household.Name, &household.MonthsOfEmergencyFund)
+	if err != nil {
+		log.Println(err)
+	}
+
+	household.Id = id
+
+	return household
+}

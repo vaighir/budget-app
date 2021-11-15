@@ -36,6 +36,10 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Get("/create-a-household", handlers.ShowNewHouseholdForm)
 	mux.Post("/create-a-household", handlers.AddHousehold)
 
+	// Income routes
+
+	mux.Post("/add-income", handlers.AddIncome)
+
 	// Load static files
 
 	fileServer := http.FileServer(http.Dir("./static/"))
