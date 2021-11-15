@@ -1,4 +1,4 @@
-module github.com/vaighir/go-diet/app
+module github.com/vaighir/budget-app/app
 
 go 1.17
 

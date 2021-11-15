@@ -1,7 +1,7 @@
 package helpers
 
 import (
-	"github.com/vaighir/go-diet/app/pkg/config"
+	"github.com/vaighir/budget-app/app/pkg/config"
 )
 
 var app *config.AppConfig

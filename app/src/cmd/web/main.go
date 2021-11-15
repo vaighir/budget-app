@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
-	"github.com/vaighir/go-diet/app/pkg/config"
-	"github.com/vaighir/go-diet/app/pkg/handlers"
-	"github.com/vaighir/go-diet/app/pkg/helpers"
-	"github.com/vaighir/go-diet/app/pkg/render"
+	"github.com/vaighir/budget-app/app/pkg/config"
+	"github.com/vaighir/budget-app/app/pkg/handlers"
+	"github.com/vaighir/budget-app/app/pkg/helpers"
+	"github.com/vaighir/budget-app/app/pkg/render"
 )
 
 const (

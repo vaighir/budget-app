@@ -4,10 +4,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/vaighir/go-diet/app/pkg/db_helpers"
-	"github.com/vaighir/go-diet/app/pkg/helpers"
-	"github.com/vaighir/go-diet/app/pkg/models"
-	"github.com/vaighir/go-diet/app/pkg/render"
+	"github.com/vaighir/budget-app/app/pkg/db_helpers"
+	"github.com/vaighir/budget-app/app/pkg/helpers"
+	"github.com/vaighir/budget-app/app/pkg/models"
+	"github.com/vaighir/budget-app/app/pkg/render"
 	"golang.org/x/crypto/bcrypt"
 )
 

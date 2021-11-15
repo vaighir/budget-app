@@ -3,12 +3,10 @@ package db_helpers
 import (
 	"log"
 
-	"github.com/vaighir/go-diet/app/pkg/drivers"
-	"github.com/vaighir/go-diet/app/pkg/models"
+	"github.com/vaighir/budget-app/app/pkg/drivers"
+	"github.com/vaighir/budget-app/app/pkg/models"
 	"golang.org/x/crypto/bcrypt"
 )
-
-const dbDns = "host=localhost port=5432 dbname=test_db user=user password=password"
 
 func GetAllUsers() []models.User {
 

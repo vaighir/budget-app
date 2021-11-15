@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"github.com/vaighir/go-diet/app/pkg/config"
-	"github.com/vaighir/go-diet/app/pkg/models"
+	"github.com/vaighir/budget-app/app/pkg/config"
+	"github.com/vaighir/budget-app/app/pkg/models"
 )
 
 const pathToTemplates = "./templates"

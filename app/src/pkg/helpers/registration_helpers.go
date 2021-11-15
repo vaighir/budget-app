@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/vaighir/go-diet/app/pkg/db_helpers"
+	"github.com/vaighir/budget-app/app/pkg/db_helpers"
 )
 
 func CheckUsername(username string) (bool, string) {
