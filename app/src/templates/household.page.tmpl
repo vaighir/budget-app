@@ -1,6 +1,7 @@
 {{template "base" .}}
 
 {{define "content"}}
+
 <div class="container">
   <h1>{{index .StringMap "household_name"}}</h1>
 
@@ -28,7 +29,12 @@
           <td>{{.Name}}</td>
           <td>{{.Amount}}</td>
           <td>Edit</td>
-          <td>Delete</td>
+          <td>
+          <form action="delete-income" method="post">
+          <input type="hidden" name="income_id" id="income_id" value="{{.Id}}">
+          <button type="submit" class="registerbtn">Delete</button>
+          </form>
+          </td>
         </tr>
       {{end}}
       </tbody>

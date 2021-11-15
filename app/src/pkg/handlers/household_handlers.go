@@ -31,10 +31,6 @@ func Household(w http.ResponseWriter, r *http.Request) {
 
 			householdIncomes := db_helpers.GetAllIncomesByHouseholdId(householdId)
 
-			for _, income := range householdIncomes {
-				log.Printf("name %s, amount %f", income.Name, income.Amount)
-			}
-
 			stringMap["username"] = user.Username
 			stringMap["household_name"] = household.Name
 
