@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/vaighir/go-diet/app/pkg/db_helpers"
@@ -81,6 +82,7 @@ func ShowNewHouseholdForm(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Parse data from create household form and create a household
 func AddHousehold(w http.ResponseWriter, r *http.Request) {
 	stringMap := make(map[string]string)
 
@@ -100,10 +102,25 @@ func AddHousehold(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// TODO parse the form and create a household
+		err := r.ParseForm()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		householdName := r.Form.Get("name")
+
+		household := models.Household{
+			Name: householdName,
+		}
+
+		newHouseholdId := db_helpers.CreateHousehold(household)
+		db_helpers.AddHouseholdToUser(user, newHouseholdId)
 
 		app.Session.Put(r.Context(), "info", "Household created")
 		http.Redirect(w, r, "/household", http.StatusSeeOther)
+
+		log.Printf("Created household %s", householdName)
 
 		return
 

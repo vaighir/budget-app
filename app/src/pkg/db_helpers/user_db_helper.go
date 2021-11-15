@@ -84,11 +84,25 @@ func UpdateUser(models.User) {
 
 }
 
-func AddUserToHousehold(u models.User, householdId int) {
+func AddHouseholdToUser(user models.User, householdId int) {
+	db, err := drivers.ConnectSQL(dbDns)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.SQL.Close()
 
+	rows, err := db.SQL.Query("update users set household_id = $1 where id = $2", householdId, user.Id)
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	for rows.Next() {
+
+	}
 }
 
-func RemoveUserFromHousehold(u models.User, householdId int) {
+func RemoveHouseholdFromUser(u models.User, householdId int) {
 
 }
 
