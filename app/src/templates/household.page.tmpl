@@ -3,7 +3,9 @@
 {{define "content"}}
 
 <div class="container">
+
   <h1>{{index .StringMap "household_name"}}</h1>
+  {{index .StringMap "username"}}'s household
   <div>
     <p>Invite a new household member (Feature coming soon)</p>
   </div>
@@ -158,6 +160,7 @@
     </table>
   </div>
  
+ <div>
   <table class="table">
     <thead>
       <td><h4>Savings</h4></td>
@@ -170,10 +173,10 @@
         <table class="table">
           <thead>
             <tr>
-              <td>Savings name</td>
-              <td>Savings amount</td>
-              <td>Edit savings</td>
-              <td>Delete savings</td>
+              <td>Name</td>
+              <td>Amount</td>
+              <td>Edit</td>
+              <td>Delete</td>
             </tr>
           </thead>
           <tbody>
@@ -214,10 +217,10 @@
         <table class="table">
           <thead>
             <tr>
-              <td>Fund name</td>
-              <td>Fund amount</td>
-              <td>Edit fund</td>
-              <td>Delete fund</td>
+              <td>Name</td>
+              <td>Amount</td>
+              <td>Edit</td>
+              <td>Delete</td>
             </tr>
           </thead>
           <tbody>
@@ -318,6 +321,8 @@
       
     </tbody>
   </table>
+ </div>
+  
 
 </div>
 
