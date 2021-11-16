@@ -40,6 +40,7 @@ func routes(app *config.AppConfig) http.Handler {
 
 	mux.Post("/add-income", handlers.AddIncome)
 	mux.Post("/delete-income", handlers.DeleteIncome)
+	mux.Post("/edit-income", handlers.EditIncome)
 
 	// Load static files
 

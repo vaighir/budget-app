@@ -26,15 +26,31 @@
       <tbody>
       {{range index .InterfaceMap "incomes"}}
         <tr>
-          <td>{{.Name}}</td>
-          <td>{{.Amount}}</td>
-          <td>Edit</td>
+
+          <form action="edit-income" method="post">
+            <input type="hidden" name="income_id" id="income_id" value="{{.Id}}">
+
+            <td>
+              <input type="text" name="name" id="name" value="{{.Name}}" required>
+            </td>
+
+            <td>
+              <input type="number" step="0.01" name="amount" id="amount" value="{{.Amount}}" required>
+            </td>
+            
+            <td>
+              <button type="submit" class="registerbtn">Edit</button>
+            </td>
+
+          </form>
+
           <td>
           <form action="delete-income" method="post">
           <input type="hidden" name="income_id" id="income_id" value="{{.Id}}">
           <button type="submit" class="registerbtn">Delete</button>
           </form>
           </td>
+        
         </tr>
       {{end}}
       </tbody>

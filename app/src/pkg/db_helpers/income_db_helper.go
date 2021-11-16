@@ -74,6 +74,24 @@ func GetIncomeById(id int) models.Income {
 	return income
 }
 
+func UpdateIncome(income models.Income) {
+	db, err := drivers.ConnectSQL(dbDns)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.SQL.Close()
+
+	rows, err := db.SQL.Query("update income set name = $1, amount = $2 where id = $3", income.Name, income.Amount, income.Id)
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	for rows.Next() {
+
+	}
+}
+
 func DeleteIncome(id int) {
 
 	db, err := drivers.ConnectSQL(dbDns)
