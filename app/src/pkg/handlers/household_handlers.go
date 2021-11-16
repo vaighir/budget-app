@@ -61,6 +61,10 @@ func Household(w http.ResponseWriter, r *http.Request) {
 				totalHouseholdMExpenses += mExpense.Amount
 			}
 
+			emergencyFundAmount := float64(household.MonthsOfEmergencyFund) * totalHouseholdMExpenses
+
+			totalHouseholdFunds += emergencyFundAmount
+
 			monthlyBalance := totalHouseholdIncome - totalHouseholdMExpenses
 
 			stringMap["username"] = user.Username
@@ -76,7 +80,7 @@ func Household(w http.ResponseWriter, r *http.Request) {
 			floatMap["total_funds"] = totalHouseholdFunds
 			floatMap["total_monthly_expenses"] = totalHouseholdMExpenses
 			floatMap["monthly_balance"] = monthlyBalance
-			floatMap["emergency_fund_amount"] = float64(household.MonthsOfEmergencyFund) * totalHouseholdMExpenses
+			floatMap["emergency_fund_amount"] = emergencyFundAmount
 
 			interfaceMap["incomes"] = householdIncomes
 			interfaceMap["savings"] = householdSavings
