@@ -36,11 +36,11 @@
 <div>
 <ul class="navbar-nav ml-auto">
     {{if index .BoolMap "logged_in"}}
-    <li class="nav-item nav-link">You're logged in as {{index .StringMap "username"}}</li>
-    <li class="nav-item"><a class="nav-link" href="/logout">Log out</a></li>
+        <li class="nav-item">You're logged in as {{index .StringMap "username"}}</li>
+        <li class="nav-item"><a class="nav-link" href="/logout">Log out</a></li>
     {{else}}
-    <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
-    <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+        <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+        <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
     {{end}}
     
 </ul>
@@ -59,6 +59,13 @@
     {{block "content" .}}
 
     {{end}}
+
+<div>
+    <hr>
+    <footer>
+        <p><b>&copy; Wiktor Sierpinski</b></p>
+    </footer>
+</div>
 
     {{block "js" .}}
 
