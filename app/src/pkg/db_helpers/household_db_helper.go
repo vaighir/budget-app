@@ -55,3 +55,21 @@ func GetHouseholdById(id int) models.Household {
 
 	return household
 }
+
+func UpdateHousehold(household models.Household) {
+	db, err := drivers.ConnectSQL(dbDns)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.SQL.Close()
+
+	rows, err := db.SQL.Query("update household set months_for_emergency_fund = $1 where id = $2", household.MonthsOfEmergencyFund, household.Id)
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	for rows.Next() {
+
+	}
+}

@@ -36,6 +36,8 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Get("/create-a-household", handlers.ShowNewHouseholdForm)
 	mux.Post("/create-a-household", handlers.AddHousehold)
 
+	mux.Post("/change-emergency-fund", handlers.ChangeEmergencyFundLength)
+
 	// Income routes
 
 	mux.Post("/add-income", handlers.AddIncome)

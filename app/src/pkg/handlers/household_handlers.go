@@ -3,6 +3,7 @@ package handlers
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/vaighir/budget-app/app/pkg/db_helpers"
 	"github.com/vaighir/budget-app/app/pkg/models"
@@ -26,8 +27,6 @@ func Household(w http.ResponseWriter, r *http.Request) {
 		householdId := user.HouseholdId
 
 		if householdId > 0 {
-			intMap["household_id"] = householdId
-
 			household := db_helpers.GetHouseholdById(householdId)
 
 			householdIncomes := db_helpers.GetAllIncomesByHouseholdId(householdId)
@@ -62,17 +61,22 @@ func Household(w http.ResponseWriter, r *http.Request) {
 				totalHouseholdMExpenses += mExpense.Amount
 			}
 
+			monthlyBalance := totalHouseholdIncome - totalHouseholdMExpenses
+
 			stringMap["username"] = user.Username
 			stringMap["household_name"] = household.Name
 
 			boolMap["logged_in"] = true
 
-			intMap["emergency_fund"] = household.MonthsOfEmergencyFund
+			intMap["emergency_fund_length"] = household.MonthsOfEmergencyFund
+			intMap["household_id"] = householdId
 
 			floatMap["total_income"] = totalHouseholdIncome
 			floatMap["total_savings"] = totalHouseholdSavings
 			floatMap["total_funds"] = totalHouseholdFunds
 			floatMap["total_monthly_expenses"] = totalHouseholdMExpenses
+			floatMap["monthly_balance"] = monthlyBalance
+			floatMap["emergency_fund_amount"] = float64(household.MonthsOfEmergencyFund) * totalHouseholdMExpenses
 
 			interfaceMap["incomes"] = householdIncomes
 			interfaceMap["savings"] = householdSavings
@@ -86,6 +90,60 @@ func Household(w http.ResponseWriter, r *http.Request) {
 				BoolMap:      boolMap,
 				InterfaceMap: interfaceMap,
 			})
+
+			return
+
+		} else {
+			app.Session.Put(r.Context(), "warning", "You don't have a household.")
+			http.Redirect(w, r, "/create-a-household", http.StatusSeeOther)
+			return
+		}
+
+	} else {
+		app.Session.Put(r.Context(), "warning", "You have to be logged in to view households")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
+}
+
+func ChangeEmergencyFundLength(w http.ResponseWriter, r *http.Request) {
+	stringMap := make(map[string]string)
+
+	getSessionMsg(r, stringMap)
+
+	loggedIn := app.Session.Exists(r.Context(), "user_id")
+
+	if loggedIn {
+		uid := app.Session.Get(r.Context(), "user_id")
+		user := db_helpers.GetUserById(uid.(int))
+		householdId := user.HouseholdId
+
+		if householdId > 0 {
+			household := db_helpers.GetHouseholdById(householdId)
+
+			err := r.ParseForm()
+			if err != nil {
+				log.Println(err)
+				return
+			}
+
+			// TODO get household id from form and compare to see if the user is trying to change the right emergency fund
+			emergencyFundLengthAsString := r.Form.Get("length")
+
+			emergencyFundLength, err := strconv.Atoi(emergencyFundLengthAsString)
+			if err != nil {
+				log.Println("Failed to convert emergency fund length to int")
+				log.Println(err)
+				app.Session.Put(r.Context(), "warning", "Couldn't change emergency fund length.")
+				http.Redirect(w, r, "/household", http.StatusSeeOther)
+				return
+			}
+
+			household.MonthsOfEmergencyFund = emergencyFundLength
+
+			db_helpers.UpdateHousehold(household)
+
+			app.Session.Put(r.Context(), "info", "Updated emergency fund.")
+			http.Redirect(w, r, "/household", http.StatusSeeOther)
 
 			return
 
