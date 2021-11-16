@@ -46,6 +46,14 @@ func Household(w http.ResponseWriter, r *http.Request) {
 				totalHouseholdSavings += savings.Amount
 			}
 
+			householdFunds := db_helpers.GetAllFundsByHouseholdId(householdId)
+
+			var totalHouseholdFunds float64
+
+			for _, fund := range householdFunds {
+				totalHouseholdFunds += fund.Amount
+			}
+
 			stringMap["username"] = user.Username
 			stringMap["household_name"] = household.Name
 
@@ -55,9 +63,11 @@ func Household(w http.ResponseWriter, r *http.Request) {
 
 			floatMap["total_income"] = totalHouseholdIncome
 			floatMap["total_savings"] = totalHouseholdSavings
+			floatMap["total_funds"] = totalHouseholdFunds
 
 			interfaceMap["incomes"] = householdIncomes
 			interfaceMap["savings"] = householdSavings
+			interfaceMap["funds"] = householdFunds
 
 			render.RenderTemplate(w, "household.page.tmpl", &models.TemplateData{
 				StringMap:    stringMap,

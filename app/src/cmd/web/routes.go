@@ -48,6 +48,12 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Post("/delete-savings", handlers.DeleteSavings)
 	mux.Post("/edit-savings", handlers.EditSavings)
 
+	// Savings routes
+
+	mux.Post("/add-fund", handlers.AddFund)
+	mux.Post("/delete-fund", handlers.DeleteFund)
+	mux.Post("/edit-fund", handlers.EditFund)
+
 	// Load static files
 
 	fileServer := http.FileServer(http.Dir("./static/"))
