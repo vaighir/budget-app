@@ -3,9 +3,10 @@ package models
 import "time"
 
 type UpcomingExpense struct {
-	Id          int
-	HouseholdId int
-	Name        string
-	Amount      float64
-	Deadline    time.Time
+	Id             int
+	HouseholdId    int
+	Name           string
+	Amount         float64
+	Deadline       time.Time
+	DeadlineString string
 }

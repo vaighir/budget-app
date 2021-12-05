@@ -42,10 +42,12 @@ func GetAllUpcomingExpensesByHouseholdId(householdId int) []models.UpcomingExpen
 	var uExpeses []models.UpcomingExpense
 
 	for rows.Next() {
-		err := rows.Scan(&uExpese.Id, &uExpese.Name, &uExpese.Amount)
+		err := rows.Scan(&uExpese.Id, &uExpese.Name, &uExpese.Amount, &uExpese.Deadline)
 		if err != nil {
 			log.Println(err)
 		}
+
+		uExpese.DeadlineString = uExpese.Deadline.Format("2006-01-02")
 
 		uExpeses = append(uExpeses, uExpese)
 
@@ -69,6 +71,7 @@ func GetUpcomingExpenseById(id int) models.UpcomingExpense {
 		log.Fatal(err)
 	}
 
+	uExpense.DeadlineString = uExpense.Deadline.Format("2006-01-02")
 	uExpense.Id = id
 
 	return uExpense
