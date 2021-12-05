@@ -1,0 +1,112 @@
+package db_helpers
+
+import (
+	"log"
+
+	"github.com/vaighir/budget-app/app/pkg/drivers"
+	"github.com/vaighir/budget-app/app/pkg/models"
+)
+
+func CreateUpcomingExpence(householdId int, uExpese models.UpcomingExpense) {
+
+	db, err := drivers.ConnectSQL(dbDns)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.SQL.Close()
+
+	rows, err := db.SQL.Query("insert into upcoming_expences (household_id, name, amount, deadline) values ($1, $2, $3, $4)", householdId, uExpese.Name, uExpese.Amount, uExpese.Deadline)
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	for rows.Next() {
+
+	}
+}
+
+func GetAllUpcomingExpensesByHouseholdId(householdId int) []models.UpcomingExpense {
+	db, err := drivers.ConnectSQL(dbDns)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.SQL.Close()
+
+	rows, err := db.SQL.Query("select id, name, amount, deadline from upcoming_expences where household_id = $1", householdId)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var uExpese models.UpcomingExpense
+	var uExpeses []models.UpcomingExpense
+
+	for rows.Next() {
+		err := rows.Scan(&uExpese.Id, &uExpese.Name, &uExpese.Amount)
+		if err != nil {
+			log.Println(err)
+		}
+
+		uExpeses = append(uExpeses, uExpese)
+
+	}
+
+	return uExpeses
+}
+
+func GetUpcomingExpenseById(id int) models.UpcomingExpense {
+
+	var uExpense models.UpcomingExpense
+
+	db, err := drivers.ConnectSQL(dbDns)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.SQL.Close()
+
+	err = db.SQL.QueryRow("select household_id, name, amount, deadline from upcoming_expences where id = $1", id).Scan(&uExpense.HouseholdId, &uExpense.Name, &uExpense.Amount, &uExpense.Deadline)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	uExpense.Id = id
+
+	return uExpense
+}
+
+func UpdateUpcomingExpense(uExpense models.UpcomingExpense) {
+	db, err := drivers.ConnectSQL(dbDns)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.SQL.Close()
+
+	rows, err := db.SQL.Query("update upcoming_expences set name = $1, amount = $2, deadline = $3 where id = $3", uExpense.Name, uExpense.Amount, uExpense.Deadline, uExpense.Id)
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	for rows.Next() {
+
+	}
+}
+
+func DeleteUpcomingExpense(id int) {
+
+	db, err := drivers.ConnectSQL(dbDns)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.SQL.Close()
+
+	rows, err := db.SQL.Query("delete from upcoming_expences where id = $1", id)
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	for rows.Next() {
+
+	}
+}
