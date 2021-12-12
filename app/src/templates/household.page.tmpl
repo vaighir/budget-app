@@ -3,7 +3,6 @@
 {{define "content"}}
 
 <div class="container">
-
   <h1>{{index .StringMap "household_name"}}</h1>
   {{index .StringMap "username"}}'s household
   <div>
@@ -11,425 +10,43 @@
   </div>
 
   <div>
-    <table class="table">
-      <thead>
-        <tr>
-          <th><h4>Incomes</h4></th>
-          <th><h4>Monthly expenses</h4></th>
-        </tr>
-      </thead>
 
-      <tbody>
-        <tr>
-          <td>
-            <table class="table">
-              <thead>
-                <tr>
-                  <td>Name</td>
-                  <td>Amount</td>
-                  <td>Edit</td>
-                  <td>Delete</td>
-                </tr>
-              </thead>
-              <tbody>
-              {{range index .InterfaceMap "incomes"}}
-                <tr>
+    <h2>Monthly</h2>
+    
+    <div class="row">
+      <div class="col-6">{{template "income" .}}</div>
 
-                  <form action="edit-income" method="post">
-                    <input type="hidden" name="income_id" id="income_id" value="{{.Id}}">
+      <div class="col-6">{{template "monthly-expense" .}}</div>
+    </div>
 
-                    <td>
-                      <input type="text" name="name" id="name" value="{{.Name}}" required>
-                    </td>
+    <h3>Monthly balance</h3>
+    <p> Your monthly balance is {{index .FloatMap "monthly_balance"}}. </p>
 
-                    <td>
-                      <input type="number" step="0.01" name="amount" id="amount" value="{{.Amount}}" required>
-                    </td>
-                    
-                    <td>
-                      <button type="submit" class="registerbtn">Edit</button>
-                    </td>
-
-                  </form>
-
-                  <td>
-                  <form action="delete-income" method="post">
-                  <input type="hidden" name="income_id" id="income_id" value="{{.Id}}">
-                  <button type="submit" class="registerbtn">Delete</button>
-                  </form>
-                  </td>
-                
-                </tr>
-              {{end}}
-              </tbody>
-            </table>
-          </td>
-
-
-          <td>
-              <table class="table">
-                <thead>
-                  <tr>
-                    <td>Name</td>
-                    <td>Amount</td>
-                    <td>Edit</td>
-                    <td>Delete</td>
-                  </tr>
-                </thead>
-                <tbody>
-                {{range index .InterfaceMap "monthly_expenses"}}
-                  <tr>
-
-                    <form action="edit-monthly-expense" method="post">
-                      <input type="hidden" name="monthly_expense_id" id="monthly_expense_id" value="{{.Id}}">
-
-                      <td>
-                        <input type="text" name="name" id="name" value="{{.Name}}" required>
-                      </td>
-
-                      <td>
-                        <input type="number" step="0.01" name="amount" id="amount" value="{{.Amount}}" required>
-                      </td>
-                      
-                      <td>
-                        <button type="submit" class="registerbtn">Edit</button>
-                      </td>
-
-                    </form>
-
-                    <td>
-                    <form action="delete-monthly-expense" method="post">
-                    <input type="hidden" name="monthly_expense_id" id="monthly_expense_id" value="{{.Id}}">
-                    <button type="submit" class="registerbtn">Delete</button>
-                    </form>
-                    </td>
-                  
-                  </tr>
-                {{end}}
-                </tbody>
-              </table>
-          </td>
-
-        </tr>
-
-        <tr>
-          <td><b>Total monthly income: {{index .FloatMap "total_income"}}</b></td>
-          <td><b>Total monthly expenses: {{index .FloatMap "total_monthly_expenses"}}</b></td>
-        </tr>
-
-        <tr>
-          <td>
-            <b>Add income</b>
-
-            <form action="add-income" method="post">
-              <label for="name">Name</label>
-              <input type="text" placeholder="Enter name" name="name" id="name" required>
-
-              <label for="amount">Amount</label>
-              <input type="number" step="0.01" placeholder="Enter amount" name="amount" id="amount" required>
-
-              <button type="submit" class="registerbtn">Add income</button>
-            </form>
-          </td>
-
-          <td>
-            <b>Add monthly expense</b>
-
-            <form action="add-monthly-expense" method="post">
-              <label for="name">Name</label>
-              <input type="text" placeholder="Enter name" name="name" id="name" required>
-
-              <label for="amount">Amount</label>
-              <input type="number" step="0.01" placeholder="Enter amount" name="amount" id="amount" required>
-
-              <button type="submit" class="registerbtn">Add monthly expense</button>
-            </form>
-          </td>
-
-        </tr>
-
-        <tr>
-          <td>
-            <h3>Monthly balance</h3>
-            <p>
-            Your monthly balance is {{index .FloatMap "monthly_balance"}}.
-            </p>
-          </td>
-        </tr>
-      </tbody>
-    </table>
   </div>
 
- <hr>
- 
- <div>
-  <table class="table">
-    <thead>
-      <td><h4>Savings</h4></td>
-      <td><h4>Funds</h4></td>
-    </thead>
-
-    <tbody>
-    <tr>
-      <td>
-        <table class="table">
-          <thead>
-            <tr>
-              <td>Name</td>
-              <td>Amount</td>
-              <td>Edit</td>
-              <td>Delete</td>
-            </tr>
-          </thead>
-          <tbody>
-          {{range index .InterfaceMap "savings"}}
-            <tr>
-
-              <form action="edit-savings" method="post">
-                <input type="hidden" name="savings_id" id="savings_id" value="{{.Id}}">
-
-                <td>
-                  <input type="text" name="name" id="name" value="{{.Name}}" required>
-                </td>
-
-                <td>
-                  <input type="number" step="0.01" name="amount" id="amount" value="{{.Amount}}" required>
-                </td>
-                
-                <td>
-                  <button type="submit" class="registerbtn">Edit</button>
-                </td>
-
-              </form>
-
-              <td>
-              <form action="delete-savings" method="post">
-              <input type="hidden" name="savings_id" id="savings_id" value="{{.Id}}">
-              <button type="submit" class="registerbtn">Delete</button>
-              </form>
-              </td>
-            
-            </tr>
-          {{end}}
-          </tbody>
-        </table>
-      </td>
-
-      <td>
-        <table class="table">
-          <thead>
-            <tr>
-              <td>Name</td>
-              <td>Amount</td>
-              <td>Edit</td>
-              <td>Delete</td>
-            </tr>
-          </thead>
-          <tbody>
-          {{range index .InterfaceMap "funds"}}
-            <tr>
-
-              <form action="edit-fund" method="post">
-                <input type="hidden" name="fund_id" id="fund_id" value="{{.Id}}">
-
-                <td>
-                  <input type="text" name="name" id="name" value="{{.Name}}" required>
-                </td>
-
-                <td>
-                  <input type="number" step="0.01" name="amount" id="amount" value="{{.Amount}}" required>
-                </td>
-                
-                <td>
-                  <button type="submit" class="registerbtn">Edit</button>
-                </td>
-
-              </form>
-
-              <td>
-              <form action="delete-fund" method="post">
-              <input type="hidden" name="fund_id" id="fund_id" value="{{.Id}}">
-              <button type="submit" class="registerbtn">Delete</button>
-              </form>
-              </td>
-            
-            </tr>
-          {{end}}
-          </tbody>
-        </table>
-      </td>
-    </tr>
-
-    <tr>
-      <td></td>
-      <td>
-
-        <h4>Emergency fund</h4>
-          <p>
-          It is adviced to save 3 to 6 months worth of your recurring expenses as an emergency fund. 
-          You currently plan to save {{index .IntMap "emergency_fund_length"}} months. It amounts to {{index .FloatMap "emergency_fund_amount"}}
-          </p>
-          <p>
-          Here you can decide how many months of your normal expenses you want to save for your emergency fund.
-          <form action="change-emergency-fund" method="post">
-              <label for="length"><b>Emergency fund length:</b></label>
-              <input type="hidden" name="household_id" id="household_id" value="{{index .IntMap "household_id"}}">
-              <input type="number" step="1" placeholder="{{index .IntMap "emergency_fund_length"}}" name="length" id="length" required>
-              <button type="submit" class="registerbtn">Apply change</button>
-            </form>
-          </p>
-      </td>
-    </tr>
-
-    <tr>
-
-      <td><b>Total savings: {{index .FloatMap "total_savings"}}</b></td>
-      <td><b>Total funds: {{index .FloatMap "total_funds"}}</b></td>
-
-    </tr>
-
-    <tr>
-
-      <td>
-        <b>Add savings</b>
-
-        <form action="add-savings" method="post">
-          <label for="name">Name</label>
-          <input type="text" placeholder="Enter name" name="name" id="name" required>
-
-          <label for="amount">Amount</label>
-          <input type="number" step="0.01" placeholder="Enter amount" name="amount" id="amount" required>
-
-          <button type="submit" class="registerbtn">Add savings</button>
-        </form>
-      </td>
-
-      <td>
-        <b>Add fund</b>
-
-        <form action="add-fund" method="post">
-
-          <label for="name">Name</label>
-          <input type="text" placeholder="Enter name" name="name" id="name" required>
-
-          <label for="amount">Amount</label>
-          <input type="number" step="0.01" placeholder="Enter amount" name="amount" id="amount" required>
-
-          <button type="submit" class="registerbtn">Add fund</button>
-        </form>
-      </td>
-
-    </tr>
-      
-    </tbody>
-  </table>
- </div>
-  
   <hr>
 
   <div>
-    <table class="table">
-      <thead>
-        <tr>
-          <th><h4>Upcoming expenses</h4></th>
-          <th><h4>Calendar</h4></th>
-        </tr>
-      </thead>
 
-      <tbody>
-        <tr>
-          
+   <h2>Long term</h2>
+    
+    <div class="row">
+      <div class="col-6">{{template "savings" .}}</div>
 
+      <div class="col-6">{{template "fund" .}}</div>
+    </div>
 
-          <td>
-              <table class="table">
-                <thead>
-                  <tr>
-                    <td>Name</td>
-                    <td>Amount</td>
-                    <td>Deadline</td>
-                    <td>Edit</td>
-                    <td>Delete</td>
-                  </tr>
-                </thead>
-                <tbody>
-                {{range index .InterfaceMap "upcoming_expenses"}}
-                  <tr>
+  </div>
 
-                    <form action="edit-upcoming-expense" method="post">
-                      <input type="hidden" name="upcoming_expense_id" id="upcoming_expense_id" value="{{.Id}}">
+  <hr>
 
-                      <td>
-                        <input type="text" name="name" id="name" value="{{.Name}}" required>
-                      </td>
+  <div>
+    <h2>Planning</h2>
 
-                      <td>
-                        <input type="number" step="0.01" name="amount" id="amount" value="{{.Amount}}" required>
-                      </td>
-
-                      <td>
-                        <input type="date" name="deadline" id="deadline" value="{{.DeadlineString}}" required>
-                      </td>
-                      
-                      <td>
-                        <button type="submit" class="registerbtn">Edit</button>
-                      </td>
-
-                    </form>
-
-                    <td>
-                    <form action="delete-upcoming-expense" method="post">
-                    <input type="hidden" name="upcoming_expense_id" id="upcoming_expense_id" value="{{.Id}}">
-                    <button type="submit" class="registerbtn">Delete</button>
-                    </form>
-                    </td>
-                  
-                  </tr>
-                {{end}}
-                </tbody>
-              </table>
-          </td>
-
-          <td>
-            
-          </td>
-
-        </tr>
-
-        <tr>
-         
-          <td><b>Total upcoming expenses: {{index .FloatMap "total_upcoming_expenses"}}</b></td>
-           <td></td>
-        </tr>
-
-        <tr>
-          
-
-          <td>
-            <b>Add upcoming expense</b>
-
-            <form action="add-upcoming-expense" method="post">
-              <label for="name">Name</label>
-              <input type="text" placeholder="Enter name" name="name" id="name" required>
-
-              <label for="amount">Amount</label>
-              <input type="number" step="0.01" placeholder="Enter amount" name="amount" id="amount" required>
-
-              <label for="deadline">Deadline</label>
-              <input type="date" name="deadline" id="deadline" required>
-
-              <button type="submit" class="registerbtn">Add upcoming expense</button>
-            </form>
-          </td>
-
-          <td>
-            
-          </td>
-
-        </tr>
-
-      </tbody>
-    </table>
+    <div class="row">
+      <div class="col-8">{{template "upcoming-expenses" .}}</div>
+      <div class="col-4">{{template "calendar" .}}</div>
+    </div>
   </div>
 
 </div>

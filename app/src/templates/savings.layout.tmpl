@@ -1,0 +1,63 @@
+{{define "savings"}}
+
+<h4>Savings</h4>
+
+<table class="table-sm">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Amount</th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{range index .InterfaceMap "savings"}}
+    <tr>
+
+        <form action="edit-savings" method="post">
+        <input type="hidden" name="savings_id" id="savings_id" value="{{.Id}}">
+
+        <td>
+            <input type="text" name="name" id="name" value="{{.Name}}" required>
+        </td>
+
+        <td>
+            <input type="number" step="0.01" name="amount" id="amount" value="{{.Amount}}" required>
+        </td>
+        
+        <td>
+            <button type="submit" class="registerbtn">Edit</button>
+        </td>
+
+        </form>
+
+        <td>
+        <form action="delete-savings" method="post">
+        <input type="hidden" name="savings_id" id="savings_id" value="{{.Id}}">
+        <button type="submit" class="registerbtn">Delete</button>
+        </form>
+        </td>
+    
+    </tr>
+    {{end}}
+    </tbody>
+</table>
+
+<b>Total savings: {{index .FloatMap "total_savings"}}</b>
+
+<br>
+
+<b>Add savings</b>
+
+<form action="add-savings" method="post">
+    <label for="name">Name</label>
+    <input type="text" placeholder="Enter name" name="name" id="name" required>
+
+    <label for="amount">Amount</label>
+    <input type="number" step="0.01" placeholder="Enter amount" name="amount" id="amount" required>
+
+    <button type="submit" class="registerbtn">Add savings</button>
+</form>
+
+{{end}}
