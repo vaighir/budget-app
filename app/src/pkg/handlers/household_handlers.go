@@ -77,6 +77,7 @@ func Household(w http.ResponseWriter, r *http.Request) {
 
 			stringMap["username"] = user.Username
 			stringMap["household_name"] = household.Name
+			stringMap["picked-date"] = app.Session.PopString(r.Context(), "picked-date")
 
 			boolMap["logged_in"] = true
 
@@ -266,6 +267,6 @@ func DatePicker(w http.ResponseWriter, r *http.Request) {
 
 	date := r.Form.Get("date")
 
-	app.Session.Put(r.Context(), "date", date)
+	app.Session.Put(r.Context(), "picked-date", date)
 	http.Redirect(w, r, "/household", http.StatusSeeOther)
 }
