@@ -1,5 +1,12 @@
 {{define "calendar"}}
 
-<h4>Calendar</h4>
+<h4>Pick a date</h4>
+
+<form action="date-picker" method="post">
+
+    <input type="date" name="date" id="date" required>
+
+    <button type="submit" class="registerbtn">Show budget at that date</button>
+</form>
 
 {{end}}

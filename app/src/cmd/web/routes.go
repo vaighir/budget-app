@@ -68,6 +68,9 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Post("/delete-upcoming-expense", handlers.DeleteUpcomingExpense)
 	mux.Post("/edit-upcoming-expense", handlers.EditUpcomingExpense)
 
+	// Date picker
+	mux.Post("/date-picker", handlers.DatePicker)
+
 	// Load static files
 
 	fileServer := http.FileServer(http.Dir("./static/"))

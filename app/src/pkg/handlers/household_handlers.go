@@ -256,3 +256,16 @@ func AddHousehold(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }
+
+func DatePicker(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	date := r.Form.Get("date")
+
+	app.Session.Put(r.Context(), "date", date)
+	http.Redirect(w, r, "/household", http.StatusSeeOther)
+}
