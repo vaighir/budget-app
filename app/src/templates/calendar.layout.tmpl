@@ -4,11 +4,11 @@
 
 <form action="date-picker" method="post">
 
-    <input type="date" name="date" id="date" required>
+    <input type="date" name="date" id="date" min="{{index .StringMap "today"}}" required>
 
     <button type="submit" class="registerbtn">Show budget at that date</button>
 </form>
-
-{{index .StringMap "picked-date"}}
-
+{{if index .StringMap "picked-date"}}
+    You'll have {{index .FloatMap "balance_by_date"}} by {{index .StringMap "picked-date"}}
+{{end}}
 {{end}}

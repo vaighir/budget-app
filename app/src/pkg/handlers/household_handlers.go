@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/vaighir/budget-app/app/pkg/db_helpers"
 	"github.com/vaighir/budget-app/app/pkg/models"
@@ -83,6 +84,7 @@ func Household(w http.ResponseWriter, r *http.Request) {
 	stringMap["username"] = user.Username
 	stringMap["household_name"] = household.Name
 	stringMap["picked-date"] = app.Session.PopString(r.Context(), "picked-date")
+	stringMap["today"] = time.Now().Format("2006-01-02")
 
 	boolMap["logged_in"] = true
 
@@ -96,6 +98,7 @@ func Household(w http.ResponseWriter, r *http.Request) {
 	floatMap["total_upcoming_expenses"] = totalHouseholdUExpenses
 	floatMap["monthly_balance"] = monthlyBalance
 	floatMap["emergency_fund_amount"] = emergencyFundAmount
+	floatMap["balance_by_date"] = calculateBalanceByDate(stringMap["picked-date"])
 
 	interfaceMap["incomes"] = householdIncomes
 	interfaceMap["savings"] = householdSavings
@@ -233,8 +236,26 @@ func DatePicker(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	date := r.Form.Get("date")
+	dateAsString := r.Form.Get("date")
 
-	app.Session.Put(r.Context(), "picked-date", date)
+	date, err := time.Parse(layout, dateAsString)
+	if err != nil {
+		log.Print("Couldn't parse date")
+		app.Session.Put(r.Context(), "warning", "A problem with the calendar occured")
+		http.Redirect(w, r, "/household", http.StatusSeeOther)
+		return
+	}
+
+	if time.Until(date) < 0 {
+		app.Session.Put(r.Context(), "warning", "You have to choose a future date")
+		http.Redirect(w, r, "/household", http.StatusSeeOther)
+		return
+	}
+
+	app.Session.Put(r.Context(), "picked-date", dateAsString)
 	http.Redirect(w, r, "/household", http.StatusSeeOther)
+}
+
+func calculateBalanceByDate(dateAsString string) float64 {
+	return 0
 }
