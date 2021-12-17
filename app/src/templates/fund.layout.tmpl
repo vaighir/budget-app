@@ -2,6 +2,22 @@
 
 <h4>Funds</h4>
 
+
+<h4>Emergency fund</h4>
+<p>
+It is adviced to save 3 to 6 months worth of your recurring expenses as an emergency fund. 
+You currently plan to save {{index .IntMap "emergency_fund_length"}} months. It amounts to {{index .FloatMap "emergency_fund_amount"}}
+</p>
+<p>
+Here you can decide how many months of your normal expenses you want to save for your emergency fund.
+<form action="change-emergency-fund" method="post">
+    <label for="length"><b>Emergency fund length:</b></label>
+    <input type="hidden" name="household_id" id="household_id" value="{{index .IntMap "household_id"}}">
+    <input type="number" step="1" placeholder="{{index .IntMap "emergency_fund_length"}}" name="length" id="length" required>
+    <button type="submit" class="registerbtn">Apply change</button>
+</form>
+</p>
+
 <table class="table-sm">
     <thead>
     <tr>
@@ -44,20 +60,6 @@
     </tbody>
 </table>
 
-<h4>Emergency fund</h4>
-<p>
-It is adviced to save 3 to 6 months worth of your recurring expenses as an emergency fund. 
-You currently plan to save {{index .IntMap "emergency_fund_length"}} months. It amounts to {{index .FloatMap "emergency_fund_amount"}}
-</p>
-<p>
-Here you can decide how many months of your normal expenses you want to save for your emergency fund.
-<form action="change-emergency-fund" method="post">
-    <label for="length"><b>Emergency fund length:</b></label>
-    <input type="hidden" name="household_id" id="household_id" value="{{index .IntMap "household_id"}}">
-    <input type="number" step="1" placeholder="{{index .IntMap "emergency_fund_length"}}" name="length" id="length" required>
-    <button type="submit" class="registerbtn">Apply change</button>
-</form>
-</p>
 
 <b>Total funds: {{index .FloatMap "total_funds"}}</b>
 
