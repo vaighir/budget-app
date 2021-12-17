@@ -2,6 +2,7 @@ package db_helpers
 
 import (
 	"log"
+	"time"
 
 	"github.com/vaighir/budget-app/app/pkg/drivers"
 	"github.com/vaighir/budget-app/app/pkg/models"
@@ -34,6 +35,36 @@ func GetAllUpcomingExpensesByHouseholdId(householdId int) []models.UpcomingExpen
 	defer db.SQL.Close()
 
 	rows, err := db.SQL.Query("select id, name, amount, deadline from upcoming_expences where household_id = $1", householdId)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var uExpese models.UpcomingExpense
+	var uExpeses []models.UpcomingExpense
+
+	for rows.Next() {
+		err := rows.Scan(&uExpese.Id, &uExpese.Name, &uExpese.Amount, &uExpese.Deadline)
+		if err != nil {
+			log.Println(err)
+		}
+
+		uExpese.DeadlineString = uExpese.Deadline.Format("2006-01-02")
+
+		uExpeses = append(uExpeses, uExpese)
+
+	}
+
+	return uExpeses
+}
+
+func GetUpcomingExpensesForHouseholdBetweenDates(householdId int, startDate time.Time, endDate time.Time) []models.UpcomingExpense {
+	db, err := drivers.ConnectSQL(dbDns)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.SQL.Close()
+
+	rows, err := db.SQL.Query("select id, name, amount, deadline from upcoming_expences where household_id = $1 and deadline between $2 and $3", householdId, startDate, endDate)
 	if err != nil {
 		log.Fatal(err)
 	}

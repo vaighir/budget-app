@@ -98,7 +98,7 @@ func Household(w http.ResponseWriter, r *http.Request) {
 	floatMap["total_upcoming_expenses"] = totalHouseholdUExpenses
 	floatMap["monthly_balance"] = monthlyBalance
 	floatMap["emergency_fund_amount"] = emergencyFundAmount
-	floatMap["balance_by_date"] = calculateBalanceByDate(stringMap["picked-date"])
+	floatMap["balance_by_date"] = calculateBalanceByDate(householdId, stringMap["picked-date"], totalHouseholdIncome, totalHouseholdMExpenses, totalHouseholdSavings, totalHouseholdFunds)
 
 	interfaceMap["incomes"] = householdIncomes
 	interfaceMap["savings"] = householdSavings
@@ -256,6 +256,43 @@ func DatePicker(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/household", http.StatusSeeOther)
 }
 
-func calculateBalanceByDate(dateAsString string) float64 {
-	return 0
+func calculateBalanceByDate(householdId int, dateAsString string, income float64, monthlyExpenses float64, savings float64, funds float64) float64 {
+
+	date, err := time.Parse(layout, dateAsString)
+	if err != nil {
+		return 0
+	}
+
+	monthsUntilDate := countMonthsUntil(date)
+
+	incomeUntilDate := float64(monthsUntilDate) * income
+	monthlyExpensesUntilDate := float64(monthsUntilDate) * monthlyExpenses
+
+	upcomingExpensesUntilDate := db_helpers.GetUpcomingExpensesForHouseholdBetweenDates(householdId, time.Now(), date)
+
+	var totalUpcomingMExpenses float64
+
+	for _, expense := range upcomingExpensesUntilDate {
+		totalUpcomingMExpenses += expense.Amount
+	}
+
+	balanceByDate := savings + incomeUntilDate - funds - monthlyExpensesUntilDate - float64(totalUpcomingMExpenses)
+	return balanceByDate
+}
+
+func countMonthsUntil(date time.Time) int {
+	now := time.Now()
+	monthsCount := 0
+	month := date.Month()
+
+	for now.Before(date) {
+		now = now.Add(time.Hour * 24)
+		nextMonth := now.Month()
+		if nextMonth != month {
+			monthsCount++
+		}
+		month = nextMonth
+	}
+
+	return monthsCount
 }
