@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/vaighir/budget-app/app/pkg/config"
@@ -56,14 +58,20 @@ func getSessionMsg(r *http.Request, stringMap map[string]string) {
 }
 
 // TODO needs fixing
-/*func redirectIfNotLoggedIn(w http.ResponseWriter, r *http.Request, resource string) {
+func redirectIfNotLoggedIn(w http.ResponseWriter, r *http.Request, resource string) bool {
 	loggedIn := app.Session.Exists(r.Context(), "user_id")
+	log.Printf("You're %t", loggedIn)
 
 	if !loggedIn {
 
 		msg := fmt.Sprintf("You have to be logged in to view %s", resource)
+		log.Print(msg)
 
 		app.Session.Put(r.Context(), "warning", msg)
-		http.Redirect(w, r, "https://www.google.com", http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+
+		return true
+	} else {
+		return false
 	}
-}*/
+}
