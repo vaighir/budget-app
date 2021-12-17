@@ -84,7 +84,7 @@ func UpdateUpcomingExpense(uExpense models.UpcomingExpense) {
 	}
 	defer db.SQL.Close()
 
-	rows, err := db.SQL.Query("update upcoming_expences set name = $1, amount = $2, deadline = $3 where id = $3", uExpense.Name, uExpense.Amount, uExpense.Deadline, uExpense.Id)
+	rows, err := db.SQL.Query("update upcoming_expences set name = $1, amount = $2, deadline = $3 where id = $4", uExpense.Name, uExpense.Amount, uExpense.Deadline, uExpense.Id)
 
 	if err != nil {
 		log.Println(err)
