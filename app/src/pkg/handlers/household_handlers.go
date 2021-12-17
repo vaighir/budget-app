@@ -265,10 +265,7 @@ func calculateBalanceByDate(householdId int, dateAsString string, income float64
 
 	monthsUntilDate := countMonthsUntil(date)
 
-	incomeUntilDate := float64(monthsUntilDate-1) * income
-	if incomeUntilDate < 0 {
-		incomeUntilDate = 0
-	}
+	incomeUntilDate := float64(monthsUntilDate) * income
 
 	monthlyExpensesUntilDate := float64(monthsUntilDate) * monthlyExpenses
 
