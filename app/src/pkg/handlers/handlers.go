@@ -98,3 +98,20 @@ func redirectIfHouseholdExists(w http.ResponseWriter, r *http.Request) bool {
 		return false
 	}
 }
+
+func redirectWrongHousehold(w http.ResponseWriter, r *http.Request, resourceHouseholdId int, householdId int, action string, resource string) bool {
+	if resourceHouseholdId == householdId {
+		return false
+	} else {
+		msg := fmt.Sprintf("You can't %s %s for a household different than yours", action, resource)
+		app.Session.Put(r.Context(), "warning", msg)
+		http.Redirect(w, r, "/household", http.StatusSeeOther)
+		return true
+	}
+}
+
+func getHouseholdId(r *http.Request) int {
+	uid := app.Session.Get(r.Context(), "user_id")
+	user := db_helpers.GetUserById(uid.(int))
+	return user.HouseholdId
+}

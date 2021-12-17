@@ -22,10 +22,7 @@ func AddMonthlyExpense(w http.ResponseWriter, r *http.Request) {
 	stringMap := make(map[string]string)
 
 	getSessionMsg(r, stringMap)
-
-	uid := app.Session.Get(r.Context(), "user_id")
-	user := db_helpers.GetUserById(uid.(int))
-	householdId := user.HouseholdId
+	householdId := getHouseholdId(r)
 
 	err := r.ParseForm()
 	if err != nil {
@@ -69,10 +66,7 @@ func EditMonthlyExpense(w http.ResponseWriter, r *http.Request) {
 	stringMap := make(map[string]string)
 
 	getSessionMsg(r, stringMap)
-
-	uid := app.Session.Get(r.Context(), "user_id")
-	user := db_helpers.GetUserById(uid.(int))
-	householdId := user.HouseholdId
+	householdId := getHouseholdId(r)
 
 	err := r.ParseForm()
 	if err != nil {
@@ -102,21 +96,16 @@ func EditMonthlyExpense(w http.ResponseWriter, r *http.Request) {
 
 	mExpense := db_helpers.GetMonthlyExpenseById(mExpenseId)
 
-	if mExpense.HouseholdId == householdId {
-
-		mExpense.Name = mExpenseName
-		mExpense.Amount = amount
-
-		db_helpers.UpdateMonthlyExpense(mExpense)
-		app.Session.Put(r.Context(), "info", "Edited monthly expense.")
-		http.Redirect(w, r, "/household", http.StatusSeeOther)
-		return
-
-	} else {
-		app.Session.Put(r.Context(), "warning", "You can't edit monthly expense for a different household than yours.")
-		http.Redirect(w, r, "/household", http.StatusSeeOther)
+	if redirectWrongHousehold(w, r, mExpense.HouseholdId, householdId, "edit", "monthly expense") {
 		return
 	}
+
+	mExpense.Name = mExpenseName
+	mExpense.Amount = amount
+
+	db_helpers.UpdateMonthlyExpense(mExpense)
+	app.Session.Put(r.Context(), "info", "Edited monthly expense.")
+	http.Redirect(w, r, "/household", http.StatusSeeOther)
 
 }
 
@@ -133,10 +122,7 @@ func DeleteMonthlyExpense(w http.ResponseWriter, r *http.Request) {
 	stringMap := make(map[string]string)
 
 	getSessionMsg(r, stringMap)
-
-	uid := app.Session.Get(r.Context(), "user_id")
-	user := db_helpers.GetUserById(uid.(int))
-	householdId := user.HouseholdId
+	householdId := getHouseholdId(r)
 
 	err := r.ParseForm()
 	if err != nil {
@@ -156,13 +142,12 @@ func DeleteMonthlyExpense(w http.ResponseWriter, r *http.Request) {
 
 	mExpense := db_helpers.GetMonthlyExpenseById(mExpenseId)
 
-	if mExpense.HouseholdId == householdId {
-		db_helpers.DeleteMonthlyExpense(mExpenseId)
-		app.Session.Put(r.Context(), "info", "Deleted monthly expense.")
-		http.Redirect(w, r, "/household", http.StatusSeeOther)
+	if redirectWrongHousehold(w, r, mExpense.HouseholdId, householdId, "delete", "monthly expense") {
 		return
 	}
 
-	app.Session.Put(r.Context(), "warning", "You can only delete monthly expense for your own household.")
+	db_helpers.DeleteMonthlyExpense(mExpenseId)
+	app.Session.Put(r.Context(), "info", "Deleted monthly expense.")
 	http.Redirect(w, r, "/household", http.StatusSeeOther)
+
 }

@@ -22,10 +22,7 @@ func AddSavings(w http.ResponseWriter, r *http.Request) {
 	stringMap := make(map[string]string)
 
 	getSessionMsg(r, stringMap)
-
-	uid := app.Session.Get(r.Context(), "user_id")
-	user := db_helpers.GetUserById(uid.(int))
-	householdId := user.HouseholdId
+	householdId := getHouseholdId(r)
 
 	err := r.ParseForm()
 	if err != nil {
@@ -69,10 +66,7 @@ func EditSavings(w http.ResponseWriter, r *http.Request) {
 	stringMap := make(map[string]string)
 
 	getSessionMsg(r, stringMap)
-
-	uid := app.Session.Get(r.Context(), "user_id")
-	user := db_helpers.GetUserById(uid.(int))
-	householdId := user.HouseholdId
+	householdId := getHouseholdId(r)
 
 	err := r.ParseForm()
 	if err != nil {
@@ -102,21 +96,17 @@ func EditSavings(w http.ResponseWriter, r *http.Request) {
 
 	savings := db_helpers.GetSavingsById(savingsId)
 
-	if savings.HouseholdId == householdId {
-
-		savings.Name = savingsName
-		savings.Amount = amount
-
-		db_helpers.UpdateSavings(savings)
-		app.Session.Put(r.Context(), "info", "Edited savings.")
-		http.Redirect(w, r, "/household", http.StatusSeeOther)
-		return
-
-	} else {
-		app.Session.Put(r.Context(), "warning", "You can't edit savings for a different household than yours.")
-		http.Redirect(w, r, "/household", http.StatusSeeOther)
+	if redirectWrongHousehold(w, r, savings.HouseholdId, householdId, "edit", "savings") {
 		return
 	}
+
+	savings.Name = savingsName
+	savings.Amount = amount
+
+	db_helpers.UpdateSavings(savings)
+	app.Session.Put(r.Context(), "info", "Edited savings.")
+	http.Redirect(w, r, "/household", http.StatusSeeOther)
+
 }
 
 func DeleteSavings(w http.ResponseWriter, r *http.Request) {
@@ -132,10 +122,7 @@ func DeleteSavings(w http.ResponseWriter, r *http.Request) {
 	stringMap := make(map[string]string)
 
 	getSessionMsg(r, stringMap)
-
-	uid := app.Session.Get(r.Context(), "user_id")
-	user := db_helpers.GetUserById(uid.(int))
-	householdId := user.HouseholdId
+	householdId := getHouseholdId(r)
 
 	err := r.ParseForm()
 	if err != nil {
@@ -155,13 +142,11 @@ func DeleteSavings(w http.ResponseWriter, r *http.Request) {
 
 	savings := db_helpers.GetSavingsById(savingsId)
 
-	if savings.HouseholdId == householdId {
-		db_helpers.DeleteSavings(savingsId)
-		app.Session.Put(r.Context(), "info", "Deleted savings.")
-		http.Redirect(w, r, "/household", http.StatusSeeOther)
+	if redirectWrongHousehold(w, r, savings.HouseholdId, householdId, "delete", "savings") {
 		return
 	}
 
-	app.Session.Put(r.Context(), "warning", "You can only delete savings for your own household.")
+	db_helpers.DeleteSavings(savingsId)
+	app.Session.Put(r.Context(), "info", "Deleted savings.")
 	http.Redirect(w, r, "/household", http.StatusSeeOther)
 }

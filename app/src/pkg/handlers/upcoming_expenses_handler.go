@@ -25,10 +25,7 @@ func AddUpcomingExpense(w http.ResponseWriter, r *http.Request) {
 	stringMap := make(map[string]string)
 
 	getSessionMsg(r, stringMap)
-
-	uid := app.Session.Get(r.Context(), "user_id")
-	user := db_helpers.GetUserById(uid.(int))
-	householdId := user.HouseholdId
+	householdId := getHouseholdId(r)
 
 	err := r.ParseForm()
 	if err != nil {
@@ -82,10 +79,7 @@ func EditUpcomingExpense(w http.ResponseWriter, r *http.Request) {
 	stringMap := make(map[string]string)
 
 	getSessionMsg(r, stringMap)
-
-	uid := app.Session.Get(r.Context(), "user_id")
-	user := db_helpers.GetUserById(uid.(int))
-	householdId := user.HouseholdId
+	householdId := getHouseholdId(r)
 
 	err := r.ParseForm()
 	if err != nil {
@@ -124,22 +118,18 @@ func EditUpcomingExpense(w http.ResponseWriter, r *http.Request) {
 
 	uExpense := db_helpers.GetUpcomingExpenseById(uExpenseId)
 
-	if uExpense.HouseholdId == householdId {
-
-		uExpense.Name = uExpenseName
-		uExpense.Amount = amount
-		uExpense.Deadline = deadline
-
-		db_helpers.UpdateUpcomingExpense(uExpense)
-		app.Session.Put(r.Context(), "info", "Edited upcoming expense.")
-		http.Redirect(w, r, "/household", http.StatusSeeOther)
-		return
-
-	} else {
-		app.Session.Put(r.Context(), "warning", "You can't edit upcoming expense for a different household than yours.")
-		http.Redirect(w, r, "/household", http.StatusSeeOther)
+	if redirectWrongHousehold(w, r, uExpense.HouseholdId, householdId, "edit", "an upcoming expense") {
 		return
 	}
+
+	uExpense.Name = uExpenseName
+	uExpense.Amount = amount
+	uExpense.Deadline = deadline
+
+	db_helpers.UpdateUpcomingExpense(uExpense)
+	app.Session.Put(r.Context(), "info", "Edited upcoming expense.")
+	http.Redirect(w, r, "/household", http.StatusSeeOther)
+
 }
 
 func DeleteUpcomingExpense(w http.ResponseWriter, r *http.Request) {
@@ -156,9 +146,7 @@ func DeleteUpcomingExpense(w http.ResponseWriter, r *http.Request) {
 
 	getSessionMsg(r, stringMap)
 
-	uid := app.Session.Get(r.Context(), "user_id")
-	user := db_helpers.GetUserById(uid.(int))
-	householdId := user.HouseholdId
+	householdId := getHouseholdId(r)
 
 	err := r.ParseForm()
 	if err != nil {
@@ -176,16 +164,14 @@ func DeleteUpcomingExpense(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	mExpense := db_helpers.GetUpcomingExpenseById(uExpenseId)
+	uExpense := db_helpers.GetUpcomingExpenseById(uExpenseId)
 
-	if mExpense.HouseholdId == householdId {
-		db_helpers.DeleteUpcomingExpense(uExpenseId)
-		app.Session.Put(r.Context(), "info", "Deleted upcoming expense.")
-		http.Redirect(w, r, "/household", http.StatusSeeOther)
+	if redirectWrongHousehold(w, r, uExpense.HouseholdId, householdId, "edit", "an upcoming expense") {
 		return
 	}
 
-	app.Session.Put(r.Context(), "warning", "You can only delete upcoming expense for your own household.")
+	db_helpers.DeleteUpcomingExpense(uExpenseId)
+	app.Session.Put(r.Context(), "info", "Deleted upcoming expense.")
 	http.Redirect(w, r, "/household", http.StatusSeeOther)
 
 }

@@ -22,10 +22,7 @@ func AddIncome(w http.ResponseWriter, r *http.Request) {
 	stringMap := make(map[string]string)
 
 	getSessionMsg(r, stringMap)
-
-	uid := app.Session.Get(r.Context(), "user_id")
-	user := db_helpers.GetUserById(uid.(int))
-	householdId := user.HouseholdId
+	householdId := getHouseholdId(r)
 
 	err := r.ParseForm()
 	if err != nil {
@@ -69,10 +66,7 @@ func EditIncome(w http.ResponseWriter, r *http.Request) {
 	stringMap := make(map[string]string)
 
 	getSessionMsg(r, stringMap)
-
-	uid := app.Session.Get(r.Context(), "user_id")
-	user := db_helpers.GetUserById(uid.(int))
-	householdId := user.HouseholdId
+	householdId := getHouseholdId(r)
 
 	err := r.ParseForm()
 	if err != nil {
@@ -102,21 +96,16 @@ func EditIncome(w http.ResponseWriter, r *http.Request) {
 
 	income := db_helpers.GetIncomeById(incomeId)
 
-	if income.HouseholdId == householdId {
-
-		income.Name = incomeName
-		income.Amount = amount
-
-		db_helpers.UpdateIncome(income)
-		app.Session.Put(r.Context(), "info", "Edited income.")
-		http.Redirect(w, r, "/household", http.StatusSeeOther)
-		return
-
-	} else {
-		app.Session.Put(r.Context(), "warning", "You can't edit income for a different household than yours.")
-		http.Redirect(w, r, "/household", http.StatusSeeOther)
+	if redirectWrongHousehold(w, r, income.HouseholdId, householdId, "edit", "an income") {
 		return
 	}
+
+	income.Name = incomeName
+	income.Amount = amount
+
+	db_helpers.UpdateIncome(income)
+	app.Session.Put(r.Context(), "info", "Edited income.")
+	http.Redirect(w, r, "/household", http.StatusSeeOther)
 
 }
 
@@ -133,10 +122,7 @@ func DeleteIncome(w http.ResponseWriter, r *http.Request) {
 	stringMap := make(map[string]string)
 
 	getSessionMsg(r, stringMap)
-
-	uid := app.Session.Get(r.Context(), "user_id")
-	user := db_helpers.GetUserById(uid.(int))
-	householdId := user.HouseholdId
+	householdId := getHouseholdId(r)
 
 	err := r.ParseForm()
 	if err != nil {
@@ -156,14 +142,12 @@ func DeleteIncome(w http.ResponseWriter, r *http.Request) {
 
 	income := db_helpers.GetIncomeById(incomeId)
 
-	if income.HouseholdId == householdId {
-		db_helpers.DeleteIncome(incomeId)
-		app.Session.Put(r.Context(), "info", "Deleted income.")
-		http.Redirect(w, r, "/household", http.StatusSeeOther)
+	if redirectWrongHousehold(w, r, income.HouseholdId, householdId, "delete", "an income") {
 		return
 	}
 
-	app.Session.Put(r.Context(), "warning", "You can only delete income for your own household.")
+	db_helpers.DeleteIncome(incomeId)
+	app.Session.Put(r.Context(), "info", "Deleted income.")
 	http.Redirect(w, r, "/household", http.StatusSeeOther)
 
 }

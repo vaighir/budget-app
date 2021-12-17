@@ -22,10 +22,7 @@ func AddFund(w http.ResponseWriter, r *http.Request) {
 	stringMap := make(map[string]string)
 
 	getSessionMsg(r, stringMap)
-
-	uid := app.Session.Get(r.Context(), "user_id")
-	user := db_helpers.GetUserById(uid.(int))
-	householdId := user.HouseholdId
+	householdId := getHouseholdId(r)
 
 	err := r.ParseForm()
 	if err != nil {
@@ -69,10 +66,7 @@ func EditFund(w http.ResponseWriter, r *http.Request) {
 	stringMap := make(map[string]string)
 
 	getSessionMsg(r, stringMap)
-
-	uid := app.Session.Get(r.Context(), "user_id")
-	user := db_helpers.GetUserById(uid.(int))
-	householdId := user.HouseholdId
+	householdId := getHouseholdId(r)
 
 	err := r.ParseForm()
 	if err != nil {
@@ -102,21 +96,17 @@ func EditFund(w http.ResponseWriter, r *http.Request) {
 
 	fund := db_helpers.GetFundById(fundId)
 
-	if fund.HouseholdId == householdId {
-
-		fund.Name = fundName
-		fund.Amount = amount
-
-		db_helpers.UpdateFund(fund)
-		app.Session.Put(r.Context(), "info", "Edited fund.")
-		http.Redirect(w, r, "/household", http.StatusSeeOther)
-		return
-
-	} else {
-		app.Session.Put(r.Context(), "warning", "You can't edit fund for a different household than yours.")
-		http.Redirect(w, r, "/household", http.StatusSeeOther)
+	if redirectWrongHousehold(w, r, fund.HouseholdId, householdId, "edit", "a fund") {
 		return
 	}
+
+	fund.Name = fundName
+	fund.Amount = amount
+
+	db_helpers.UpdateFund(fund)
+	app.Session.Put(r.Context(), "info", "Edited fund.")
+	http.Redirect(w, r, "/household", http.StatusSeeOther)
+
 }
 
 func DeleteFund(w http.ResponseWriter, r *http.Request) {
@@ -132,10 +122,7 @@ func DeleteFund(w http.ResponseWriter, r *http.Request) {
 	stringMap := make(map[string]string)
 
 	getSessionMsg(r, stringMap)
-
-	uid := app.Session.Get(r.Context(), "user_id")
-	user := db_helpers.GetUserById(uid.(int))
-	householdId := user.HouseholdId
+	householdId := getHouseholdId(r)
 
 	err := r.ParseForm()
 	if err != nil {
@@ -155,13 +142,12 @@ func DeleteFund(w http.ResponseWriter, r *http.Request) {
 
 	fund := db_helpers.GetFundById(fundId)
 
-	if fund.HouseholdId == householdId {
-		db_helpers.DeleteFund(fundId)
-		app.Session.Put(r.Context(), "info", "Deleted fund.")
-		http.Redirect(w, r, "/household", http.StatusSeeOther)
+	if redirectWrongHousehold(w, r, fund.HouseholdId, householdId, "delete", "a fund") {
 		return
 	}
 
-	app.Session.Put(r.Context(), "warning", "You can only delete fund for your own household.")
+	db_helpers.DeleteFund(fundId)
+	app.Session.Put(r.Context(), "info", "Deleted fund.")
 	http.Redirect(w, r, "/household", http.StatusSeeOther)
+
 }
