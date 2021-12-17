@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/vaighir/budget-app/app/pkg/config"
@@ -57,19 +56,43 @@ func getSessionMsg(r *http.Request, stringMap map[string]string) {
 	stringMap["info"] = app.Session.PopString(r.Context(), "info")
 }
 
-// TODO needs fixing
 func redirectIfNotLoggedIn(w http.ResponseWriter, r *http.Request, resource string) bool {
 	loggedIn := app.Session.Exists(r.Context(), "user_id")
-	log.Printf("You're %t", loggedIn)
 
 	if !loggedIn {
 
 		msg := fmt.Sprintf("You have to be logged in to view %s", resource)
-		log.Print(msg)
-
 		app.Session.Put(r.Context(), "warning", msg)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 
+		return true
+	} else {
+		return false
+	}
+}
+
+func redirectIfNoHousehold(w http.ResponseWriter, r *http.Request) bool {
+	uid := app.Session.Get(r.Context(), "user_id")
+	user := db_helpers.GetUserById(uid.(int))
+	householdId := user.HouseholdId
+
+	if householdId > 0 {
+		return false
+	} else {
+		app.Session.Put(r.Context(), "warning", "You don't have a household.")
+		http.Redirect(w, r, "/create-a-household", http.StatusSeeOther)
+		return true
+	}
+}
+
+func redirectIfHouseholdExists(w http.ResponseWriter, r *http.Request) bool {
+	uid := app.Session.Get(r.Context(), "user_id")
+	user := db_helpers.GetUserById(uid.(int))
+	householdId := user.HouseholdId
+
+	if householdId > 0 {
+		app.Session.Put(r.Context(), "warning", "You already have a household.")
+		http.Redirect(w, r, "/household", http.StatusSeeOther)
 		return true
 	} else {
 		return false
