@@ -32,7 +32,7 @@
             </td>
             
             <td>
-            <button type="submit" class="registerbtn">Edit</button>
+            <button type="submit" class="btn btn-warning btn-sm">Edit</button>
             </td>
 
         </form>
@@ -40,7 +40,7 @@
         <td>
         <form action="delete-upcoming-expense" method="post">
         <input type="hidden" name="upcoming_expense_id" id="upcoming_expense_id" value="{{.Id}}">
-        <button type="submit" class="registerbtn">Delete</button>
+        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
         </form>
         </td>
         
@@ -65,7 +65,7 @@
     <label for="deadline">Deadline</label>
     <input type="date" name="deadline" id="deadline" required>
 
-    <button type="submit" class="registerbtn">Add upcoming expense</button>
+    <button type="submit" class="btn btn-dark btn-sm">Add upcoming expense</button>
 </form>
 
 {{end}}

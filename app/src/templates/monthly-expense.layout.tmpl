@@ -27,7 +27,7 @@
             </td>
             
             <td>
-            <button type="submit" class="registerbtn">Edit</button>
+            <button type="submit" class="btn btn-warning btn-sm">Edit</button>
             </td>
 
         </form>
@@ -35,7 +35,7 @@
         <td>
         <form action="delete-monthly-expense" method="post">
         <input type="hidden" name="monthly_expense_id" id="monthly_expense_id" value="{{.Id}}">
-        <button type="submit" class="registerbtn">Delete</button>
+        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
         </form>
         </td>
         
@@ -57,7 +57,7 @@
     <label for="amount">Amount</label>
     <input type="number" step="0.01" placeholder="Enter amount" name="amount" id="amount" required>
 
-    <button type="submit" class="registerbtn">Add monthly expense</button>
+    <button type="submit" class="btn btn-dark btn-sm">Add monthly expense</button>
 </form>
 
 {{end}}

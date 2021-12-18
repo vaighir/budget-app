@@ -43,7 +43,7 @@ Here you can decide how many months of your normal expenses you want to save for
         </td>
         
         <td>
-            <button type="submit" class="registerbtn">Edit</button>
+            <button type="submit" class="btn btn-warning btn-sm">Edit</button>
         </td>
 
         </form>
@@ -51,7 +51,7 @@ Here you can decide how many months of your normal expenses you want to save for
         <td>
         <form action="delete-fund" method="post">
         <input type="hidden" name="fund_id" id="fund_id" value="{{.Id}}">
-        <button type="submit" class="registerbtn">Delete</button>
+        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
         </form>
         </td>
     
@@ -75,7 +75,7 @@ Here you can decide how many months of your normal expenses you want to save for
     <label for="amount">Amount</label>
     <input type="number" step="0.01" placeholder="Enter amount" name="amount" id="amount" required>
 
-    <button type="submit" class="registerbtn">Add fund</button>
+    <button type="submit" class="btn btn-dark btn-sm">Add fund</button>
 </form>
 
 {{end}}
