@@ -24,26 +24,12 @@ func AddIncome(w http.ResponseWriter, r *http.Request) {
 	getSessionMsg(r, stringMap)
 	householdId := getHouseholdId(r)
 
-	err := r.ParseForm()
+	income, err := parseAddIncomeForm(r)
+
 	if err != nil {
 		log.Println(err)
+		http.Redirect(w, r, "/household", http.StatusSeeOther)
 		return
-	}
-
-	incomeName := r.Form.Get("name")
-	amountAsString := r.Form.Get("amount")
-
-	amount, err := strconv.ParseFloat(amountAsString, 64)
-	if err != nil {
-		log.Println("Failed to convert income amount to float")
-		app.Session.Put(r.Context(), "warning", "Income must be a float.")
-		http.Redirect(w, r, "/add-income", http.StatusSeeOther)
-		return
-	}
-
-	income := models.Income{
-		Name:   incomeName,
-		Amount: amount,
 	}
 
 	db_helpers.CreateIncome(householdId, income)
@@ -68,42 +54,24 @@ func EditIncome(w http.ResponseWriter, r *http.Request) {
 	getSessionMsg(r, stringMap)
 	householdId := getHouseholdId(r)
 
-	err := r.ParseForm()
+	newIncome, oldIncomeId, err := parseEditIncomeForm(r)
+
 	if err != nil {
 		log.Println(err)
-		return
-	}
-
-	incomeName := r.Form.Get("name")
-	amountAsString := r.Form.Get("amount")
-	incomeIdAsString := r.Form.Get("income_id")
-
-	amount, err := strconv.ParseFloat(amountAsString, 64)
-	if err != nil {
-		log.Println("Failed to convert income amount to float")
-		app.Session.Put(r.Context(), "warning", "Income must be a float.")
 		http.Redirect(w, r, "/household", http.StatusSeeOther)
 		return
 	}
 
-	incomeId, err := strconv.Atoi(incomeIdAsString)
-	if err != nil {
-		log.Println("Failed to convert income id to int")
-		app.Session.Put(r.Context(), "warning", "Couldn't edit income.")
-		http.Redirect(w, r, "/household", http.StatusSeeOther)
+	oldIncome := db_helpers.GetIncomeById(oldIncomeId)
+
+	if redirectWrongHousehold(w, r, oldIncome.HouseholdId, householdId, "edit", "an income") {
 		return
 	}
 
-	income := db_helpers.GetIncomeById(incomeId)
+	oldIncome.Name = newIncome.Name
+	oldIncome.Amount = newIncome.Amount
 
-	if redirectWrongHousehold(w, r, income.HouseholdId, householdId, "edit", "an income") {
-		return
-	}
-
-	income.Name = incomeName
-	income.Amount = amount
-
-	db_helpers.UpdateIncome(income)
+	db_helpers.UpdateIncome(oldIncome)
 	app.Session.Put(r.Context(), "info", "Edited income.")
 	http.Redirect(w, r, "/household", http.StatusSeeOther)
 
@@ -124,10 +92,87 @@ func DeleteIncome(w http.ResponseWriter, r *http.Request) {
 	getSessionMsg(r, stringMap)
 	householdId := getHouseholdId(r)
 
-	err := r.ParseForm()
+	income, err := parseDeleteIncomeForm(r)
+
 	if err != nil {
 		log.Println(err)
+		http.Redirect(w, r, "/household", http.StatusSeeOther)
 		return
+	}
+
+	if redirectWrongHousehold(w, r, income.HouseholdId, householdId, "delete", "an income") {
+		return
+	}
+
+	db_helpers.DeleteIncome(income.Id)
+	app.Session.Put(r.Context(), "info", "Deleted income.")
+	http.Redirect(w, r, "/household", http.StatusSeeOther)
+
+}
+
+func parseAddIncomeForm(r *http.Request) (models.Income, error) {
+	err := r.ParseForm()
+	if err != nil {
+		return models.Income{}, err
+	}
+
+	incomeName := r.Form.Get("name")
+	amountAsString := r.Form.Get("amount")
+
+	amount, err := strconv.ParseFloat(amountAsString, 64)
+	if err != nil {
+		log.Println("Failed to convert income amount to float")
+		app.Session.Put(r.Context(), "warning", "Income must be a float.")
+		return models.Income{}, err
+	}
+
+	income := models.Income{
+		Name:   incomeName,
+		Amount: amount,
+	}
+
+	return income, err
+}
+
+func parseEditIncomeForm(r *http.Request) (models.Income, int, error) {
+
+	err := r.ParseForm()
+	if err != nil {
+		return models.Income{}, -1, err
+	}
+
+	incomeName := r.Form.Get("name")
+	amountAsString := r.Form.Get("amount")
+
+	incomeIdAsString := r.Form.Get("income_id")
+
+	amount, err := strconv.ParseFloat(amountAsString, 64)
+	if err != nil {
+		log.Println("Failed to convert income amount to float")
+		app.Session.Put(r.Context(), "warning", "Income must be a float.")
+		return models.Income{}, -1, err
+	}
+
+	incomeId, err := strconv.Atoi(incomeIdAsString)
+	if err != nil {
+		log.Println("Failed to convert income id to int")
+		app.Session.Put(r.Context(), "warning", "Couldn't edit income.")
+		return models.Income{}, -1, err
+	}
+
+	newIncome := models.Income{
+		Name:   incomeName,
+		Amount: amount,
+	}
+
+	return newIncome, incomeId, err
+
+}
+
+func parseDeleteIncomeForm(r *http.Request) (models.Income, error) {
+	err := r.ParseForm()
+	if err != nil {
+		return models.Income{}, err
 	}
 
 	incomeIdAsString := r.Form.Get("income_id")
@@ -136,18 +181,10 @@ func DeleteIncome(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Failed to convert income id to int")
 		app.Session.Put(r.Context(), "warning", "Couldn't delete income.")
-		http.Redirect(w, r, "/household", http.StatusSeeOther)
-		return
+		return models.Income{}, err
 	}
 
 	income := db_helpers.GetIncomeById(incomeId)
 
-	if redirectWrongHousehold(w, r, income.HouseholdId, householdId, "delete", "an income") {
-		return
-	}
-
-	db_helpers.DeleteIncome(incomeId)
-	app.Session.Put(r.Context(), "info", "Deleted income.")
-	http.Redirect(w, r, "/household", http.StatusSeeOther)
-
+	return income, err
 }
