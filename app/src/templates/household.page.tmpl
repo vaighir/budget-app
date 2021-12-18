@@ -9,10 +9,13 @@
     <p>Invite a new household member (Feature coming soon)</p>
   </div>
 
-  <div>
+  <div class="row">
+    <div class="col-1"><button id="monthly_button">+</button></div>
+    <div class="col-11"><h2>Monthly</h2></div>
+  </div>
 
-    <h2>Monthly</h2>
-    
+   <div id="monthly_div">
+
     <div class="row">
       <div class="col-6">{{template "income" .}}</div>
 
@@ -26,10 +29,13 @@
 
   <hr>
 
-  <div>
 
-   <h2>Long term</h2>
-    
+  <div class="row">
+    <div class="col-1"><button id="long_term_button">+</button></div>
+    <div class="col-11"><h2>Long term</h2></div>
+  </div>
+  <div id="long_term_div">
+
     <div class="row">
       <div class="col-6">{{template "savings" .}}</div>
 
@@ -40,9 +46,12 @@
 
   <hr>
 
-  <div>
-    <h2>Planning</h2>
+  <div class="row">
+    <div class="col-1"><button id="planning_button">+</button></div>
+    <div class="col-11"><h2>Planning</h2></div>
+  </div>
 
+  <div id="planning_div">
     <div class="row">
       <div class="col-8">{{template "upcoming-expenses" .}}</div>
       <div class="col-4">{{template "calendar" .}}</div>
@@ -51,4 +60,25 @@
 
 </div>
 
+{{end}}
+
+{{define "js"}}
+<script>
+
+function toggle_view(id_name) {
+  var x = document.getElementById(id_name);
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+
+document.getElementById("monthly_button").onclick = function() {toggle_view("monthly_div")};
+
+document.getElementById("long_term_button").onclick = function() {toggle_view("long_term_div")};
+
+document.getElementById("planning_button").onclick = function() {toggle_view("planning_div")};
+
+</script>
 {{end}}
