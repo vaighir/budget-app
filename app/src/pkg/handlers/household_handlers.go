@@ -263,11 +263,9 @@ func calculateBalanceByDate(householdId int, dateAsString string, income float64
 		return 0
 	}
 
-	monthsUntilDate := countMonthsUntil(date)
+	incomeUntilDate := float64(countMonths(date, "end")) * income
 
-	incomeUntilDate := float64(monthsUntilDate) * income
-
-	monthlyExpensesUntilDate := float64(monthsUntilDate) * monthlyExpenses
+	monthlyExpensesUntilDate := float64(countMonths(date, "start")) * monthlyExpenses
 
 	upcomingExpensesUntilDate := db_helpers.GetUpcomingExpensesForHouseholdBetweenDates(householdId, time.Now(), date)
 
@@ -281,13 +279,21 @@ func calculateBalanceByDate(householdId int, dateAsString string, income float64
 	return balanceByDate
 }
 
-func countMonthsUntil(date time.Time) int {
+func countMonths(date time.Time, kind string) int {
 	now := time.Now()
 	monthsCount := 0
+	dayOfMonth := 0
+
+	switch kind {
+	case "end":
+		dayOfMonth = 28
+	case "start":
+		dayOfMonth = 1
+	}
 
 	for now.Before(date) {
 		now = now.Add(time.Hour * 24)
-		if now.Day() == 1 {
+		if now.Day() == dayOfMonth {
 			monthsCount++
 		}
 	}
