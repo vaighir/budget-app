@@ -31,7 +31,13 @@ func GetAllFundsByHouseholdId(householdId int) []models.Fund {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.SQL.Close()
+	defer func() {
+		db.SQL.Close()
+
+		if r := recover(); r != nil {
+			log.Println("Recovered. Error:\n", r)
+		}
+	}
 
 	rows, err := db.SQL.Query("select id, name, amount from funds where household_id = $1", householdId)
 	if err != nil {
@@ -44,7 +50,7 @@ func GetAllFundsByHouseholdId(householdId int) []models.Fund {
 	for rows.Next() {
 		err := rows.Scan(&fund.Id, &fund.Name, &fund.Amount)
 		if err != nil {
-			log.Println(err)
+			panic(err)
 		}
 
 		funds = append(funds, fund)
