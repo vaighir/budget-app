@@ -31,13 +31,8 @@ func GetAllFundsByHouseholdId(householdId int) []models.Fund {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer func() {
-		db.SQL.Close()
-
-		if r := recover(); r != nil {
-			log.Println("Recovered. Error:\n", r)
-		}
-	}
+	
+	defer closeConnectionAndRecover() 
 
 	rows, err := db.SQL.Query("select id, name, amount from funds where household_id = $1", householdId)
 	if err != nil {
@@ -115,4 +110,12 @@ func DeleteFund(id int) {
 	for rows.Next() {
 
 	}
+}
+
+func closeConnectionAndRecover(){
+	db.SQL.Close()
+
+		if r := recover(); r != nil {
+			log.Println("Recovered. Error:\n", r)
+		}
 }
