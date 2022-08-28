@@ -13,12 +13,14 @@ func CreateMonthlyExpence(householdId int, mExpese models.MonthlyExpense) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	rows, err := db.SQL.Query("insert into monthly_expences (household_id, name, amount) values ($1, $2, $3)", householdId, mExpese.Name, mExpese.Amount)
 
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 
 	for rows.Next() {
@@ -31,11 +33,13 @@ func GetAllMonthlyExpensesByHouseholdId(householdId int) []models.MonthlyExpense
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	rows, err := db.SQL.Query("select id, name, amount from monthly_expences where household_id = $1", householdId)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	var mExpese models.MonthlyExpense
@@ -44,7 +48,7 @@ func GetAllMonthlyExpensesByHouseholdId(householdId int) []models.MonthlyExpense
 	for rows.Next() {
 		err := rows.Scan(&mExpese.Id, &mExpese.Name, &mExpese.Amount)
 		if err != nil {
-			log.Println(err)
+			panic(err)
 		}
 
 		mExpeses = append(mExpeses, mExpese)
@@ -62,11 +66,13 @@ func GetMonthlyExpenseById(id int) models.MonthlyExpense {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	err = db.SQL.QueryRow("select household_id, name, amount from monthly_expences where id = $1", id).Scan(&mExpense.HouseholdId, &mExpense.Name, &mExpense.Amount)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	mExpense.Id = id
@@ -79,12 +85,14 @@ func UpdateMonthlyExpense(mExpense models.MonthlyExpense) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	rows, err := db.SQL.Query("update monthly_expences set name = $1, amount = $2 where id = $3", mExpense.Name, mExpense.Amount, mExpense.Id)
 
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 
 	for rows.Next() {
@@ -98,12 +106,14 @@ func DeleteMonthlyExpense(id int) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	rows, err := db.SQL.Query("delete from monthly_expences where id = $1", id)
 
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 
 	for rows.Next() {

@@ -13,12 +13,14 @@ func CreateSavings(householdId int, savings models.Savings) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	rows, err := db.SQL.Query("insert into savings (household_id, name, amount) values ($1, $2, $3)", householdId, savings.Name, savings.Amount)
 
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 
 	for rows.Next() {
@@ -31,11 +33,13 @@ func GetAllSavingsByHouseholdId(householdId int) []models.Savings {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	rows, err := db.SQL.Query("select id, name, amount from savings where household_id = $1", householdId)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	var savings models.Savings
@@ -44,7 +48,7 @@ func GetAllSavingsByHouseholdId(householdId int) []models.Savings {
 	for rows.Next() {
 		err := rows.Scan(&savings.Id, &savings.Name, &savings.Amount)
 		if err != nil {
-			log.Println(err)
+			panic(err)
 		}
 
 		savingsList = append(savingsList, savings)
@@ -62,11 +66,13 @@ func GetSavingsById(id int) models.Savings {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	err = db.SQL.QueryRow("select household_id, name, amount from savings where id = $1", id).Scan(&savings.HouseholdId, &savings.Name, &savings.Amount)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	savings.Id = id
@@ -79,12 +85,14 @@ func UpdateSavings(savings models.Savings) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	rows, err := db.SQL.Query("update savings set name = $1, amount = $2 where id = $3", savings.Name, savings.Amount, savings.Id)
 
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 
 	for rows.Next() {
@@ -98,12 +106,14 @@ func DeleteSavings(id int) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	rows, err := db.SQL.Query("delete from savings where id = $1", id)
 
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 
 	for rows.Next() {
