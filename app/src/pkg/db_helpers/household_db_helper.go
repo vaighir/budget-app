@@ -13,12 +13,14 @@ func CreateHousehold(household models.Household) int {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	rows, err := db.SQL.Query("insert into household (name) values ($1)", household.Name)
 
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 
 	for rows.Next() {
@@ -29,7 +31,7 @@ func CreateHousehold(household models.Household) int {
 
 	err = db.SQL.QueryRow("select currval(pg_get_serial_sequence('household','id'))").Scan(&id)
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 
 	return id
@@ -44,11 +46,13 @@ func GetHouseholdById(id int) models.Household {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	err = db.SQL.QueryRow("select name, months_for_emergency_fund from household where id = $1", id).Scan(&household.Name, &household.MonthsOfEmergencyFund)
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 
 	household.Id = id
@@ -61,12 +65,14 @@ func UpdateHousehold(household models.Household) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	rows, err := db.SQL.Query("update household set months_for_emergency_fund = $1 where id = $2", household.MonthsOfEmergencyFund, household.Id)
 
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 
 	for rows.Next() {

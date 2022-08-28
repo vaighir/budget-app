@@ -44,7 +44,7 @@ func startServer() {
 	err := srv.ListenAndServe()
 
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	log.Printf("Serving app on port %s", portNumber)
 }
@@ -65,7 +65,7 @@ func setupConfig() {
 
 	templateCache, err := render.CreateTemplateCache()
 	if err != nil {
-		log.Fatal("cannot create template cache")
+		panic("cannot create template cache")
 	}
 
 	app.TemplateCache = templateCache

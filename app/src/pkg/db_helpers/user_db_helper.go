@@ -14,11 +14,13 @@ func GetAllUsers() []models.User {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	rows, err := db.SQL.Query("select id, username, password, household_id from users")
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	var user models.User
@@ -27,7 +29,7 @@ func GetAllUsers() []models.User {
 	for rows.Next() {
 		err := rows.Scan(&user.Id, &user.Username, &user.Password, &user.HouseholdId)
 		if err != nil {
-			log.Println(err)
+			panic(err)
 		}
 
 		users = append(users, user)
@@ -46,11 +48,13 @@ func GetUserById(id int) models.User {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	err = db.SQL.QueryRow("select username, password, household_id from users where id = $1", id).Scan(&user.Username, &user.Password, &user.HouseholdId)
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 
 	user.Id = id
@@ -66,11 +70,13 @@ func GetUserByUsername(username string) models.User {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	err = db.SQL.QueryRow("select id, password, household_id from users where username = $1", username).Scan(&user.Id, &user.Password, &user.HouseholdId)
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 
 	user.Username = username
@@ -87,12 +93,14 @@ func AddHouseholdToUser(user models.User, householdId int) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	rows, err := db.SQL.Query("update users set household_id = $1 where id = $2", householdId, user.Id)
 
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 
 	for rows.Next() {
@@ -110,19 +118,20 @@ func CreateUser(user models.User) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 
 	if err != nil {
-		log.Println(err)
-		return
+		panic(err)
 	}
 
 	rows, err := db.SQL.Query("insert into users (username, password) values ($1, $2)", user.Username, hashedPassword)
 
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 
 	for rows.Next() {

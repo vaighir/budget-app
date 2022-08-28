@@ -31,11 +31,13 @@ func GetAllFundsByHouseholdId(householdId int) []models.Fund {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	rows, err := db.SQL.Query("select id, name, amount from funds where household_id = $1", householdId)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	var fund models.Fund
@@ -44,7 +46,7 @@ func GetAllFundsByHouseholdId(householdId int) []models.Fund {
 	for rows.Next() {
 		err := rows.Scan(&fund.Id, &fund.Name, &fund.Amount)
 		if err != nil {
-			log.Println(err)
+			panic(err)
 		}
 
 		funds = append(funds, fund)
@@ -62,11 +64,13 @@ func GetFundById(id int) models.Fund {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	err = db.SQL.QueryRow("select household_id, name, amount from funds where id = $1", id).Scan(&fund.HouseholdId, &fund.Name, &fund.Amount)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	fund.Id = id
@@ -79,12 +83,14 @@ func UpdateFund(fund models.Fund) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	rows, err := db.SQL.Query("update funds set name = $1, amount = $2 where id = $3", fund.Name, fund.Amount, fund.Id)
 
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 
 	for rows.Next() {
@@ -98,12 +104,14 @@ func DeleteFund(id int) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	rows, err := db.SQL.Query("delete from funds where id = $1", id)
 
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 
 	for rows.Next() {

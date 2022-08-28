@@ -14,12 +14,14 @@ func CreateUpcomingExpence(householdId int, uExpese models.UpcomingExpense) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	rows, err := db.SQL.Query("insert into upcoming_expences (household_id, name, amount, deadline) values ($1, $2, $3, $4)", householdId, uExpese.Name, uExpese.Amount, uExpese.Deadline)
 
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 
 	for rows.Next() {
@@ -32,11 +34,13 @@ func GetAllUpcomingExpensesByHouseholdId(householdId int) []models.UpcomingExpen
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	rows, err := db.SQL.Query("select id, name, amount, deadline from upcoming_expences where household_id = $1", householdId)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	var uExpese models.UpcomingExpense
@@ -45,7 +49,7 @@ func GetAllUpcomingExpensesByHouseholdId(householdId int) []models.UpcomingExpen
 	for rows.Next() {
 		err := rows.Scan(&uExpese.Id, &uExpese.Name, &uExpese.Amount, &uExpese.Deadline)
 		if err != nil {
-			log.Println(err)
+			panic(err)
 		}
 
 		uExpese.DeadlineString = uExpese.Deadline.Format("2006-01-02")
@@ -62,11 +66,13 @@ func GetUpcomingExpensesForHouseholdBetweenDates(householdId int, startDate time
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	rows, err := db.SQL.Query("select id, name, amount, deadline from upcoming_expences where household_id = $1 and deadline between $2 and $3", householdId, startDate, endDate)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	var uExpese models.UpcomingExpense
@@ -75,7 +81,7 @@ func GetUpcomingExpensesForHouseholdBetweenDates(householdId int, startDate time
 	for rows.Next() {
 		err := rows.Scan(&uExpese.Id, &uExpese.Name, &uExpese.Amount, &uExpese.Deadline)
 		if err != nil {
-			log.Println(err)
+			panic(err)
 		}
 
 		uExpese.DeadlineString = uExpese.Deadline.Format("2006-01-02")
@@ -95,11 +101,13 @@ func GetUpcomingExpenseById(id int) models.UpcomingExpense {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	err = db.SQL.QueryRow("select household_id, name, amount, deadline from upcoming_expences where id = $1", id).Scan(&uExpense.HouseholdId, &uExpense.Name, &uExpense.Amount, &uExpense.Deadline)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	uExpense.DeadlineString = uExpense.Deadline.Format("2006-01-02")
@@ -113,12 +121,14 @@ func UpdateUpcomingExpense(uExpense models.UpcomingExpense) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	rows, err := db.SQL.Query("update upcoming_expences set name = $1, amount = $2, deadline = $3 where id = $4", uExpense.Name, uExpense.Amount, uExpense.Deadline, uExpense.Id)
 
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 
 	for rows.Next() {
@@ -132,12 +142,14 @@ func DeleteUpcomingExpense(id int) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer db.SQL.Close()
+	defer cleanup() 
 
 	rows, err := db.SQL.Query("delete from upcoming_expences where id = $1", id)
 
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 
 	for rows.Next() {
