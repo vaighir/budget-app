@@ -9,7 +9,7 @@ RUN go mod tidy && go build -o budget-app /go/app/cmd/web
 
 FROM alpine:3.16.2
 WORKDIR /app
-COPY --from=builder /go/app/budget-app /app/budget-app
+COPY --from=builder /go/app /app/
 
 EXPOSE 8080
 
